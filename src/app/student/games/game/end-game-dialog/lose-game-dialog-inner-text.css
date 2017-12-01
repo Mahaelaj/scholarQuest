@@ -1,0 +1,27 @@
+button {
+    margin:0 auto;
+    display:block;
+    background-color: lightblue;
+}
+
+img { 
+    position: absolute;
+    margin-top: -300px;
+    width: 350px;
+    z-index: -1;
+}
+
+.inline {
+    display: inline;
+}
+
+.coinText {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.coins {
+    color: darkgoldenrod;
+}
+
+button:focus {outline:0;}

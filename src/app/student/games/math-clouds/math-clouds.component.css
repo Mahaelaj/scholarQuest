@@ -1,0 +1,62 @@
+.frame {
+    width: 800px;
+    min-width: 800px;
+    height: 600px;
+    min-height: 600px;
+    border: solid black;
+    margin: auto;
+}
+
+.pipe {
+    height: 125px;
+    width: 200px;
+    border: solid black;
+    text-align: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.pipe-text {
+    margin-top: 40px;
+
+}
+
+.box {
+    height: 75px;
+    width: 200px;
+    border: solid black;
+}
+
+.wall {
+    border: solid black;
+    z-index: 2;
+    background-color: white;
+}
+
+.solution {
+    position: relative;
+    border: solid black;
+    width: 95px;
+    height: 95px;
+    left: -120px;
+    text-align: center;
+    align-items: center;
+}
+
+.solution-text {
+    margin-top: 40px;
+}
+
+.title{
+    text-align: center;
+}
+
+.score{
+    float: right;
+    margin-right: 10%;
+
+}
+
+.errors{
+    margin-left: 10%;
+}

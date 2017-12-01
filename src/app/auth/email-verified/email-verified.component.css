@@ -1,0 +1,12 @@
+div {
+    text-align: center;
+    margin-top: 100px;
+    min-width: 300px;
+}
+
+#backdrop{
+    margin-top: 100px;
+    background-color: cornsilk;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}

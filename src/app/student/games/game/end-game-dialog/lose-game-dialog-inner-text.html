@@ -1,0 +1,11 @@
+
+<img *ngIf="coins" src='../../../../assets/games/coins.gif'>
+<div class="coinText">
+    <p align="center"class="inline">You won </p>
+    <p align="center"class="inline coins">{{ data.coins }} </p>
+    <p align="center"class="inline"> coins</p>
+</div>
+<p align="center">{{ data.text }}</p>
+<mat-dialog-actions>
+    <button mat-button (click)="dialogRef.close('true')">Play Again</button>
+</mat-dialog-actions>

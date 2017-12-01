@@ -1,0 +1,13 @@
+div {
+    margin:auto;
+    width: 250px;
+    margin-top: 250px;
+    text-align: center;
+}
+
+#backdrop{
+    margin-top: 100px;
+    background-color: cornsilk;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}

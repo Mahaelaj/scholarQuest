@@ -1,0 +1,35 @@
+img {
+    display: inline-block;
+    width: 128px;
+    height: 128px;
+    background-color: white;
+}
+
+md-grid-tile {
+    border: solid grey 4px;
+    cursor: pointer;
+}
+
+md-sidenav-container {
+  margin: 0;
+  height: 1200px;
+}
+
+md-sidenav { 
+    height: 1200px;
+}
+
+h3 {
+    text-align: center;
+}
+
+ng-content {
+    margin-top: 10px;
+    padding-top: 20px;
+}
+
+.grade-button{
+    margin: 5px;
+}
+
+button:focus {outline:0;}

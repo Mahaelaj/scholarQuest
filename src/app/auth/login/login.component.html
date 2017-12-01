@@ -1,0 +1,7 @@
+<div fxLayout="row" fxFlex="100" fxLayoutAlign="center">
+    <sq-form title="Login" submit-api="login" scroll (formSubmitted)="loginFormSubmitted($event)">
+        <text-field name="email" label="Email" required></text-field>
+        <text-field name="password" label="Password" required is-password></text-field>
+    </sq-form>
+</div>
+    

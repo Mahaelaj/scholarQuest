@@ -1,0 +1,946 @@
+.title {
+     text-align: center;
+ }
+
+.waterBlock {
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 50px;
+    z-index: 4;
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+}
+
+.pipe {
+    width: 109px;
+    height: 100px;
+    position: absolute;
+}
+
+.gameboardSquare {
+    position: absolute;
+    visibility: hidden;
+}
+
+td {
+    border: solid grey;
+}
+
+.score {
+    margin-left: 25px;
+}
+
+.terrain {
+    position: absolute;
+    width: 97px;
+    height: 97px;
+    margin: 1.6px;
+    z-index: 1;
+}
+
+table {
+    margin: auto;
+    align-content: center;
+}
+
+.startBox {
+    text-align: center;
+    min-width: 100px;
+    display: inline-block;
+    vertical-align:top;
+    margin-top: 40px;
+}
+
+.title {
+    margin-bottom: 30px;
+}
+
+.startBox p {
+    font-family: Serif;
+    font-size: 18px;
+}
+
+.finishBox {
+    min-width: 250px;
+    display: inline-block;
+    vertical-align:top;
+    margin-top: 40px;
+    max-width: 350px;
+    margin-right: 10px;
+}
+
+.finishBox p {
+    font-family: Serif;
+    font-size: 18px;
+}
+
+.startPipe {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    vertical-align:top;
+    margin-right: -1px;
+}
+
+.endPipe {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    vertical-align:top;
+}
+
+.endPipe .pipe {
+    transform: rotate(180deg);
+}
+
+.pipe {
+    width: 100px;
+}
+
+.fastForward{
+    background-color: lightgray;
+}
+
+.fastForward img {
+    height: 60px;
+    width: 60px;
+}
+
+.pipeFitting {
+    visibility: hidden;
+    position: absolute;
+    height: 100px;
+}
+
+.pipeFittingLeft{
+    height: 100px;
+    position: absolute;
+    margin-left: -10px;
+    /*visibility: visible;*/
+    z-index: 15;
+}
+
+.pipeFittingRight{
+    height: 100px;
+    position: absolute;
+    margin-left: 95px;
+    /*visibility: visible;*/
+    z-index: 15;
+}
+
+.pipeFittingDown {
+    height: 100px;
+    position: absolute;
+     margin-top: 53px;
+    margin-left: 43px;
+    transform:rotate(90deg);
+    /*visibility: hidden;*/
+    z-index: 15;
+}
+
+.pipeFittingUp{
+    height: 100px;
+    position: absolute;
+    margin-top: -52px;
+    margin-left: 43px;
+    transform:rotate(90deg);
+    /*visibility: hidden;*/
+    z-index: 15;
+}
+
+.rock {
+    visibility: hidden;
+    position: absolute;
+    z-index: 2;
+    /*margin-left: -35px;*/
+}
+
+.holdingPipe {
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    margin: 2px;
+}
+
+.noPointer {
+    pointer-events: none;
+}
+
+.underPipe {
+    z-index: 3;
+}
+
+.outerPipe {
+    z-index: 6;
+}
+
+.specialEffect {
+    z-index: 5;
+    position: absolute;
+    width:10px;
+}
+
+.waterSpillLeft {
+    z-index: 20;
+    position: absolute;
+    margin-top: -80px;
+    height: 40px;
+    visibility: hidden;
+    margin-left: -20px;
+}
+
+.waterSpillRight {
+    z-index: 20;
+    position: absolute;
+    margin-top: -80px;
+    margin-left: 80px;
+    height: 40px;
+    visibility: hidden;
+}
+
+.waterSpill {
+    z-index: 20;
+    position: absolute;
+    visibility: hidden;
+}
+
+.waterSpillUp {
+    z-index: 20;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: -140px;
+    height: 40px;
+    visibility: hidden;
+}
+
+.waterSpillDown {
+    z-index: 20;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: -20px;
+    height: 40px;
+    visibility: hidden;
+}
+
+.waterSpillRightFirst{
+    z-index: 20;
+    position: absolute;
+    margin-top: -80px;
+    margin-left: 180px;
+    height: 40px;
+    visibility: hidden;
+}
+
+.waterSpillRightLast{
+    z-index: 20;
+    position: absolute;
+    margin-top: -20px;
+    margin-left: -50px;
+    height: 40px;
+    visibility: hidden;
+}
+
+@-webkit-keyframes waterBlockRightHalfAni {
+    0%   { width:1px;}
+    100% {width:35px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockRightHalfAni {
+    0%   {width: 1px;}
+    100% {width:35px;}
+}
+
+@-webkit-keyframes waterBlockRightFullAni {
+    0%   { width:1px;}
+    100% {width:100px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockRightFullAni {
+    0%   {width: 1px;}
+    100% {width:100px;}
+}
+
+@-webkit-keyframes waterBlockUpHalfAni {
+    0%   {height:1px;}
+    100% {height:35px; margin-top: 0px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockUpHalfAni {
+    0%   {height: 1px;}
+    100% {height:35px; margin-top: 0px;}
+}
+
+.waterBlockRightHalfFirst{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 50px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockRightHalfFirstAni; 
+    -webkit-animation-duration: 10.0s; 
+    -webkit-animation: waterBlockRightHalfFirstAni 10.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 10s;
+    animation-name: waterBlockRightHalfFirstAni;
+    animation: waterBlockRightHalfFirstAni 10.0s forwards;
+    animation-timing-function: linear;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes waterBlockRightHalfFirstAni {
+    0%   { width:1px;}
+    100% {width:50px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockRightHalfFirstAni {
+    0%   {width: 1px;}
+    100% {width:50px;}
+}
+
+.waterBlockRightHalfLast{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 0px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockRightHalfLastAni; 
+    -webkit-animation-duration: 15.0s; 
+    -webkit-animation: waterBlockRightHalfLastAni 15.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 15s;
+    animation-name: waterBlockRightHalfLastAni;
+    animation: waterBlockRightHalfLastAni 15.0s forwards;
+    animation-timing-function: linear;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes waterBlockRightHalfLastAni {
+    0%   { width:1px;}
+    100% {width:50px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockRightHalfLastAni {
+    0%   {width: 1px;}
+    100% {width:50px;}
+}
+
+.waterBlockRightHalf{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 65px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockRightHalfAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockRightHalfAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockRightHalfAni;
+    animation: waterBlockRightHalfAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+.waterBlockRightHalfLeft{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 0px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockRightHalfLeftAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockRightHalfLeftAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockRightHalfLeftAni;
+    animation: waterBlockRightHalfLeftAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockRightHalfLeftAni {
+    0%   { width:1px;}
+    100% {width:65px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockRightHalfLeftAni {
+    0%   {width: 1px;}
+    100% {width:65px;}
+}
+
+.waterBlockRightfull{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 0px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockRightFullAni; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 5.0s; /* Safari 4.0 - 8.0 */
+    -webkit-animation: waterBlockRightFullAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockRightFullAni;
+    animation: waterBlockRightFullAni 5.0s forwards;
+    animation-timing-function: linear;
+    
+}
+
+.waterBlockUpHalf{
+    background-color: #40a4df;
+    width: 40px;
+    margin-top: 30px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockUpHalfAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockUpHalfAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockUpHalfAni;
+    animation: waterBlockUpHalfAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+.waterBlockUpHalfBottom{
+    background-color: #40a4df;
+    width: 40px;
+    margin-top: 100px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockUpHalfBottomAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockUpHalfBottomAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockUpHalfBottomAni;
+    animation: waterBlockUpHalfBottomAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+
+@-webkit-keyframes waterBlockUpHalfBottomAni {
+    0%   {height:1px;}
+    100% {height:65px; margin-top: 35px}
+}
+
+/* Standard syntax */
+@keyframes waterBlockUpHalfBottomAni {
+    0%   {height: 1px;}
+    100% {height:65px; margin-top: 35px}
+}
+
+.waterBlockDownHalf{
+    background-color: #40a4df;
+    width: 40px;
+    margin-top: 70px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockDownHalfAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockDownHalfAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockDownHalfAni;
+    animation: waterBlockDownHalfAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockDownHalfAni {
+    0%   {height:1px;}
+    100% {height:35px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockDownHalfAni {
+    0%   {height: 1px;}
+    100% {height:35px;}
+}
+
+.waterBlockDownHalfTop{
+    background-color: #40a4df;
+    width: 40px;
+    margin-left: 30px;
+    margin-top: 0px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockDownHalfTopAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockDownHalfTopAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockDownHalfTopAni;
+    animation: waterBlockDownHalfTopAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockDownHalTopfAni {
+    0%   {height:1px;}
+    100% {height:65px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockDownHalfTopAni {
+    0%   {height: 1px;}
+    100% {height:65px;}
+}
+
+.waterBlockLeftHalf{
+     background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockHeightDownAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockHeightDownAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockHeightDownAni;
+    animation: waterBlockHeightDownAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockHeightHalfAni {
+    0%   {width:1px;}
+    100% {width:35px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockHeightDownAni {
+    0%   {width: 1px;}
+    100% {width:35px; margin-left: 0px;}
+}
+
+.waterBlockLeftHalfRight{
+    background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left:100px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockLeftHalfRightAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockLeftHalfRightAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockLeftHalfRightAni;
+    animation: waterBlockLeftHalfRightAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockLeftHalfRightAni {
+    0%   {width:1px;}
+    100% {width:65px; margin-left:35px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockLeftHalfRightAni {
+    0%   {width: 1px;}
+    100% {width:65px; margin-left:35px;}
+}
+
+.waterBlockLeftFull{
+     background-color: #40a4df;
+    height: 40px;
+    margin-top: 30px;
+    margin-left:100px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockLeftFull; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockLeftFull 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockLeftFull;
+    animation: waterBlockLeftFull 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockLeftFull {
+    0%   {width:1px;}
+    100% {width:100px; margin-left:0px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockLeftFull {
+    0%   {width: 1px;}
+    100% {width:100px; margin-left:0px;}
+}
+
+.waterBlockUpfull {
+ background-color: #40a4df;
+    width: 40px;
+    margin-top: 100px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockUpfullAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockUpfullAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockUpfullAni;
+    animation: waterBlockUpfullAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockUpfullAni {
+    0%   {height:1px;}
+    100% {height:100px; margin-top: 0px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockUpfullAni {
+    0%   {height: 1px;}
+    100% {height:100px; margin-top: 0px;}
+}
+
+.waterBlockDownFull {
+ background-color: #40a4df;
+    width: 40px;
+    margin-top: 0px;
+    margin-left: 30px;
+    z-index: 4;
+    -webkit-animation-name: waterBlockDownFullAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: waterBlockDownFullAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: waterBlockDownFullAni;
+    animation: waterBlockDownFullAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes waterBlockDownFullAni {
+    0%   {height:1px;}
+    100% {height:100px;}
+}
+
+/* Standard syntax */
+@keyframes waterBlockDownFullAni {
+    0%   {height: 1px;}
+    100% {height:100px;}
+}
+
+.bubblesDownRight{
+    margin-left: 45px;
+    margin-top: 103px;
+    -webkit-animation-name: bubblesDownRightAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: bubblesDownRightAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesDownRightAni;
+    animation: bubblesDownRightAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesDownRightAni {
+    0%   {margin-top:103px;}
+    50%  {margin-top:45px; margin-left: 45px;}
+    100% {margin-top:45px; margin-left: 103px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesDownRightAni {
+    0%   {margin-top:103px;}
+    50%  {margin-top:45px; margin-left: 45px;}
+    100% {margin-top:45px; margin-left: 103px;}
+}
+
+.bubblesStart{
+    margin-left: 45px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesStartAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesStartAni;
+    animation-timing-function: linear;
+
+}
+@-webkit-keyframes bubblesStartAni {
+    0%   {margin-left:45px;}
+    100% {margin-left:100px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesStartAni {
+    0%   {margin-left: 45px;}
+    100% {margin-left:100px;}
+}
+
+@-webkit-keyframes bubbleDownRightAni {
+    0%   {margin-top:65px;}
+    100% {margin-top:25px;}
+}
+
+/* Standard syntax */
+@keyframes bubbleDownRightAni {
+    0%   {margin-top: 60px;}
+    100% {margin-top:25px;}
+}
+
+.bubblesLeftUp {
+    margin-left: -3px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesLeftUpAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesLeftUpAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesLeftUpAni {
+    0%   {margin-left:-3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: -3px;  margin-left:45px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesLeftUpAni {
+    0%   {margin-left:-3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: -3px; margin-left:45px;}
+}
+
+
+.bubblesDownLeft {
+    margin-left: 45px;
+    margin-top: 103px;
+    -webkit-animation-name: bubblesDownLeftAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation: bubblesDownLeftAni 5.0s forwards;
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesDownLeftAni;
+    animation: bubblesDownLeftAni 5.0s forwards;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesDownLeftAni {
+    0%   {margin-top:103px;}
+    50%  {margin-top:45px; margin-left: 45px;}
+    100% {margin-top:45px; margin-left: -3px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesDownLeftAni {
+    0%   {margin-top:103px;}
+    50%  {margin-top:45px; margin-left: 45px;}
+    100% {margin-top:45px; margin-left: -3px;}
+}
+
+
+.bubblesUpRight {
+    margin-left: 45px;
+    margin-top: -3px;
+    -webkit-animation-name:bubblesUpRightAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesUpRightAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesUpRightAni {
+    0%   {margin-top:-3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 45px;  margin-left:103px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesUpRightAni {
+    0%   {margin-top:-3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 45px;  margin-left:103px;}
+}
+
+.bubblesLeftDown {
+    margin-left: -3px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesLeftDownAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesLeftDownAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesLeftDownAni {
+    0%   {margin-left: -3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 103px;  margin-left:45px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesLeftDownAni {
+    0%   {margin-left: -3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 103px; margin-left:45px;}
+}
+
+.bubblesRightDown {
+    margin-left: 103px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesRightDownAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesRightDownAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesRightDownAni {
+    0%   {margin-left: 103px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 103px;  margin-left:45px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesRightDownAni {
+    0%   {margin-left: 103px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 103px;  margin-left:45px;}
+}
+
+.bubblesRightUp {
+    margin-left: 103px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesRightUpAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesRightUpAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesRightUpAni {
+    0%   {margin-left: 103px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: -3px;  margin-left:45px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesRightUpAni {
+    0%   {margin-left: 103px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: -3px;  margin-left:45px;}
+}
+
+.bubblesUpLeft {
+    margin-left: 45px;
+    margin-top: -3px;
+    -webkit-animation-name: bubblesUpLeftAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesUpLeftAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesUpLeftAni {
+    0%   {margin-top: -3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 45px;  margin-left: -3px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesUpLeftAni {
+    0%   {margin-top: -3px;}
+    50% {margin-left:45px; margin-top: 45px;}
+    100% {margin-top: 45px;  margin-left:-3px;}
+}
+
+.bubblesLeftRight {
+    margin-left: -3px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesLeftRightAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesLeftRightAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesLeftRightAni {
+    0%   {margin-left: -3px;}
+    100% {margin-left:103px;}
+}
+
+/* Standard syntax */
+@keyframes bubbleDownRighbubblesLeftRightAnitAni {
+      0%   {margin-left: -3px;}
+    100% {margin-left:103px;}
+}
+
+.bubblesRightLeft {
+    margin-left: 103px;
+    margin-top: 45px;
+    -webkit-animation-name: bubblesRightLeftAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesRightLeftAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesRightLeftAni {
+    0%   {margin-left: 103px;}
+    100% {margin-left: -3px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesRightLeftAni {
+      0%   {margin-left:103px;}
+    100% {margin-left:-3px;}
+}
+
+.bubblesUpDown{
+    margin-left: 45px;
+    margin-top: -3px;
+    -webkit-animation-name: bubblesUpDownAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesUpDownAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesUpDownAni {
+    0% {margin-top: -3px;}
+    100% {margin-top: 103px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesUpDownAni {
+    0% {margin-top: -3px;}
+    100% {margin-top: 103px;}
+}
+
+.bubblesDownUp{
+    margin-left: 45px;
+    margin-top: 103px;
+    -webkit-animation-name: bubblesDownUpAni; 
+    -webkit-animation-duration: 5.0s; 
+    -webkit-animation-timing-function: linear;
+    animation-duration: 5s;
+    animation-name: bubblesDownUpAni;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes bubblesDownUpAni {
+    0% {margin-top: 103px;}
+    100% {margin-top: -3px;}
+}
+
+/* Standard syntax */
+@keyframes bubblesDownUpAni {
+    0% {margin-top: 103px;}
+    100% {margin-top: -3px;}
+}

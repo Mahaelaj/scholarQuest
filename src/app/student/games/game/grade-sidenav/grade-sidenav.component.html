@@ -1,0 +1,16 @@
+<mat-sidenav-container>
+  <mat-sidenav id="sidenav" #sidenav mode="push" (open-start)="openSidenav()" (close)="closeSidenav()">
+     <mat-card-title>
+       <h3>Grades</h3>
+       </mat-card-title>
+      <mat-grid-list cols=1 rowHeight="130px" (change)="change()" >
+          <mat-grid-tile *ngFor="let option of options" (click)="clicked(option.index)">
+            <img [src]=option.img/>
+          </mat-grid-tile>
+      </mat-grid-list>
+  </mat-sidenav>
+  <button mat-fab class="grade-button" (click)="sidenav.open()">
+      <mat-icon>grade</mat-icon>
+   </button>
+  <ng-content></ng-content>
+</mat-sidenav-container>

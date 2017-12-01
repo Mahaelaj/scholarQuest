@@ -1,0 +1,15 @@
+.outerEye{
+	border: solid black;
+	border-radius: 50px;
+    display: inline-block;
+    position: absolute;   
+}
+
+.innerEye{
+    width: 1px;
+    height: 1px;
+    border: solid black;
+    border-radius: 50px;
+    background: black;
+    position:absolute;
+}

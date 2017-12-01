@@ -1,0 +1,10 @@
+<div fxLayout="row" fxFlex="100" fxLayoutAlign="center">
+    <sq-form title="Create your Account" submit-api="signup" complete-route="../welcome" scroll>
+        <text-field name="firstName" label="First Name" required></text-field>
+        <text-field name="lastName" label="Last Name" required></text-field>
+        <text-field name="email" label="Email" required validate-email></text-field>
+        <text-field #pwd name="password" label="Password" required is-password validate-password="confirmPassword"></text-field>
+        <text-field name="confirmPassword" label="Confirm Your Password" required is-password validate-identical="password"></text-field>
+        <select-field name="grade" placeholder="Grade" required [options]="gradeOptions"></select-field>
+    </sq-form>
+</div>

@@ -1,0 +1,7 @@
+<sq-grade-sidenav (buttonClicked)="changeGradeLevel($event)" (openedSidenav)="openSidenav()" (closedSidenav)="closedSidenav()">
+    <mat-card [style.height]="height ? height : '475px'">
+        <ng-content></ng-content>
+    </mat-card>
+</sq-grade-sidenav>
+<sq-end-game-dialog #endGame (playAgainSelect)="playAgain()"></sq-end-game-dialog>
+<sq-countdown-outer-dialog #countdown (countdownDone)="countdownDone()"></sq-countdown-outer-dialog>

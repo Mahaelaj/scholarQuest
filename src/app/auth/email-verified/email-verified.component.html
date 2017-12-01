@@ -1,0 +1,13 @@
+<div fxLayout="row" fxFlex="100" fxLayoutAlign="center">
+    <mat-card *ngIf="emailVerified"> Your account has been activated. Have Fun!
+        <div>
+            <button mat-button color="primary" [routerLink]="['/profile']">Make My Avatar</button>    
+            <button mat-button color="primary" [routerLink]="['/games']">Play Games</button>    
+        </div>
+     </mat-card>
+    <mat-card *ngIf="!emailVerified"> We could not activate your account at this time. Create an account.
+        <div>
+            <button mat-button color="primary" [routerLink]="['/auth/signup']">Create Account</button>    
+        </div>
+    </mat-card>
+</div>

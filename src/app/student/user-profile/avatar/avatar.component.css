@@ -1,0 +1,69 @@
+#avatarWrapper {
+    position: relative;
+    width:500px;
+    height:1000px;
+    border: solid black; 
+    margin: auto;
+}
+
+img {
+    display: inline-block;
+    position: absolute;
+}
+
+.editMenu{
+    display: inline-block;
+    vertical-align: top;
+}
+
+button {
+    margin-bottom: 15px;
+}
+
+#face, #eyes, #nose, #mouth, #neck {
+    width: 200px;
+    right: 150px;
+}
+
+#face, #eyes, #nose, #mouth {
+    top: 50px;
+}
+
+#hair {
+    top:1;
+    width: 200px;
+    right: 149px;
+}
+
+#neck {
+    top: 170px;
+}
+
+#shirt {
+    top: 180px;
+    width: 500px;
+    right: 0px;
+}
+
+#arms {
+    top: 325px;
+    right: 50px; 
+    width: 400px;
+}
+
+#pants {
+    top: 475px;
+    right: 85px;
+    width: 330px;
+}
+
+#shoes {
+    top: 815px;
+    width: 370px;
+    right: 38px;
+}
+
+ #hair {
+     top: 30px;
+ }
+

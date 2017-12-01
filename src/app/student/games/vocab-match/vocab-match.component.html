@@ -1,0 +1,23 @@
+<sq-game #game (playAgainEvent)="reload()" (changeGradeLevelEvent)="changeGradeLevel($event)" type="vocab" height="800px">
+
+    <h1>Vocabulary Match</h1>
+    <h1 #score class="score">Score: 0</h1>
+    <div style="min-width: 900px"> 
+        <div fxLayout="row" fxFlex="100" >
+            <div  fxFlex="50" >
+            <ul class="wrapper" *ngFor="let row of vocabDefs">
+                <li class="container defs">
+                    {{row}}
+                <li class="container drop" (dragover)="dragover($event)" (drop)="onDrop($event, row)">
+                        &nbsp;
+            </ul>
+            </div>
+            <div  fxFlex="50">
+                <div class="container words" *ngFor="let row of vocabWords" draggable="true" (dragstart)="dragStart(row)">
+                {{row}}
+            </div>
+            </div>
+        </div>
+    </div>
+</sq-game>
+    

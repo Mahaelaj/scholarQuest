@@ -1,0 +1,11 @@
+<div *ngIf="scroll" class="scroll">
+    <div class="scrollWrapper">
+        <h1>{{title}}</h1>
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+            <ng-content select="text-field,select-field"></ng-content>
+            <div class="buttonWrapper">
+                <button mat-button type="submit" [disabled]="!form.valid">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

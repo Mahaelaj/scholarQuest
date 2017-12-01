@@ -1,0 +1,6 @@
+<div #cursorFollower></div>
+<div [ngSwitch]="cursorFollowerService.selectedCursorFollower.value" [@show]="show" >
+    <div *ngSwitchCase="2">
+        <sq-eyes [xPos]="xPos" [yPos]="yPos"></sq-eyes>
+    </div>
+</div>

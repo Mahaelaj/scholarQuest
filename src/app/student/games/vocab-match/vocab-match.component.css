@@ -1,0 +1,39 @@
+.container {
+    height: 50px;
+    margin: auto;
+}
+
+.words {
+    width: 200px;
+    margin-bottom: 3px;
+    text-align:center;
+    border: solid black;
+}
+
+.drop {
+    display: inline-block;
+    width: 200px;
+    border: dotted black;
+}
+
+.defs {
+    vertical-align: top;
+    display: inline-block;
+    width: 300px;      
+    margin-right: 3px; 
+    border: solid black;
+}
+
+.wrapper {
+    text-align:center;
+    min-width: 550px;
+    margin-bottom: 3px;
+}
+
+h1 {
+    font-family: Georgia, "Times New Roman";
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+

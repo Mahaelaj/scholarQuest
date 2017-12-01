@@ -1,0 +1,8 @@
+mat-card {
+    width: 550px;
+    margin: auto;
+}
+
+mat-tab-group {
+    padding-bottom: 15px;
+}

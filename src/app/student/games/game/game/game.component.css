@@ -1,0 +1,26 @@
+img {
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    display: block;
+}
+
+h1 {
+    text-align: center;
+}
+
+.gameWrapper {
+    margin: auto;
+    text-align: center;
+}
+
+.gameName {
+    font-size: 25px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+}
+
+md-card {
+    width: 1400px;
+    margin:auto;
+}

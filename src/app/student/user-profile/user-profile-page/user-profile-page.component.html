@@ -1,0 +1,30 @@
+<div class="container" fxLayout="row" fxFlex="100" fxLayout.xs="column" fxLayout.sm="column" fxLayout.md="column" fxLayoutGap="25px" fxFlexAlign="center">
+  <div fxFlex="50" class="avatar-container">
+      <mat-card>
+        <sq-avatar></sq-avatar>
+        <button  mat-icon-button [routerLink]="['edit-avatar']">
+          <img class="icon" src="../../../assets/icons/ShirtIcon.png" />
+        </button>
+      </mat-card>
+  </div>
+  <div fxFlex="50">
+    <sq-button-grid-card
+      class="cursor-card"
+      [selectedNorm]="studentData.cursorId"
+      title="Cursor"
+      patchValue="cursor"
+      [options]="cursorService.getCursors()" 
+      (normButtonClicked)="changeCursor($event)" 
+      #cursorList>
+      </sq-button-grid-card>
+    <sq-button-grid-card
+    [selectedNorm]="studentData.cursorFollowerId"
+     title="Cursor Follower"
+     patchValue="cursorFollower" 
+     [options]="cursorFollowerService.getCursorFollowers()" 
+     (normButtonClicked)="changeCursorFollower($event)" 
+     #cursorFollowerList>
+     </sq-button-grid-card>
+  </div>
+</div>
+

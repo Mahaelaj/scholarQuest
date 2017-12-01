@@ -1,0 +1,5 @@
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+<sq-navbar #nav></sq-navbar>
+<router-outlet></router-outlet>
+<div (window:mousemove)="mouseMove($event)"></div>
+<sq-cursor-follower [xPos]="xPos" [yPos]="yPos"></sq-cursor-follower>

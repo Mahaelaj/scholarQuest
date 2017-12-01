@@ -1,0 +1,34 @@
+<sq-game #game (playAgainEvent)="reload()" (changeGradeLevelEvent)="changeGradeLevel($event)" type="vocab">
+    <div class="container" fxLayout="row" fxLayoutAlign="center center" fxLayout.xs="column">
+        <h1 class="title">Typing</h1>
+    </div>
+    <div class="container" fxLayout="row" fxLayoutAlign="center center" fxLayout.xs="column">
+        <div class="errors" fxFlex="50" fxLayoutAlign="center center" fxLayout="column">
+            <div>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+            </div>
+            <div>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>
+                <mat-icon>clear</mat-icon>            
+            </div>
+        </div>
+        <div fxFlex="50" fxLayoutAlign="center center" >
+            <h3 class="score">{{scoreText}}</h3>
+        </div>
+    </div>
+    <div class="wordRow" fxLayout="row" fxLayoutAlign="center center" fxLayout.sm="column" fxLayout.xs="column">
+        <h3 class="displayWord">
+            {{displayedWord}}
+        </h3>
+        <h5 *ngFor="let word of vocabularyQueue" class="queueWord">
+            {{word}}
+        </h5>
+    </div>  
+</sq-game>

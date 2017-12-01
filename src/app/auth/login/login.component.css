@@ -1,0 +1,26 @@
+#wrapper{
+    height: 500px;
+    width: 510px;
+    margin: auto;
+}
+#bwrapper{
+    text-align: center;
+}
+
+input{
+    width: 505px;
+}
+
+.error{
+    color: orangered;
+    text-align: center;
+}
+
+h1{
+   text-align: center;
+}
+
+.container{
+    background-color:cornsilk;
+    height: 500px;
+}

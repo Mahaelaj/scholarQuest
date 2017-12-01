@@ -1,0 +1,87 @@
+<div class="container" fxLayout="row" fxFlex="100" fxLayout.xs="column" fxLayout.sm="column" fxLayout.md="column" fxLayoutGap="25px" fxFlexAlign="center">
+  <div fxFlex="50" class="avatar-container">
+    <mat-card>
+      <sq-avatar #avatar (menuClicked)="changeMenu($event)" (avatarDataRetrieved)="avatarDataRetrieved($event)"></sq-avatar>
+    </mat-card>
+  </div>
+  <div fxFlex="50" fxLayout="column">
+    <mat-tab-group dynamicHeight>
+      <mat-tab label="Hair">
+        <sq-button-grid-card
+          title="Hair"
+          [selectedNorm]="avatar.avatar.hairShapeId" 
+          [selectedMini]="avatar.avatar.hairColorId"
+          [options]="hairOptions"
+          [miniOptions]="avatarService.hairColors"
+          (normButtonClicked)="updateHairShape($event)"
+          (miniButtonClicked)="updateHairColor($event)">
+        </sq-button-grid-card> 
+      </mat-tab>
+    </mat-tab-group>
+    <mat-tab-group dynamicHeight>
+      <mat-tab label="Face">
+        <sq-button-grid-card
+            title="Face"
+            [selectedNorm]="avatar.avatar.skinId" 
+            [options]="avatarService.faces"
+            (normButtonClicked)="updateFace($event)"
+          >
+          </sq-button-grid-card>
+      </mat-tab>
+      <mat-tab label="Eyes">
+        <sq-button-grid-card
+            title="Eyes" 
+            [selectedMini]="avatar.avatar.eyesColorId"
+            [selectedNorm]="avatar.avatar.eyesShapeId" 
+            [options]="eyesOptions"
+            [miniOptions]="avatarService.eyeColors"
+            (normButtonClicked)="updateEyesShape($event)"
+            (miniButtonClicked)="updateEyesColor($event)">
+          </sq-button-grid-card>
+      </mat-tab>
+      <mat-tab label="Nose">
+        <sq-button-grid-card
+            title="Nose" 
+            [selectedNorm]="avatar.avatar.noseId" 
+            [options]="avatarService.noses"
+            (normButtonClicked)="updateNose($event)">
+          </sq-button-grid-card>
+    </mat-tab>
+    <mat-tab label="Mouth" >
+      <sq-button-grid-card
+          title="Mouth" 
+          [selectedNorm]="avatar.avatar.mouthId" 
+          [options]="avatarService.mouths"
+          (normButtonClicked)="updateMouth($event)">
+        </sq-button-grid-card>
+      </mat-tab>
+    </mat-tab-group>
+
+     <mat-tab-group dynamicHeight="true">
+      <mat-tab label="Shirt">
+        <sq-button-grid-card
+            title="Shirt"
+            [selectedNorm]="avatar.avatar.shirtId" 
+            [options]="avatarService.shirts"
+            (normButtonClicked)="updateShirt($event)">
+          </sq-button-grid-card> 
+      </mat-tab>
+        <mat-tab label="Pants">
+          <sq-button-grid-card
+            [selectedNorm]="avatar.avatar.pantsId" 
+            title="Pants" 
+            [options]="avatarService.pants"
+            (normButtonClicked)="updatePants($event)">
+          </sq-button-grid-card> 
+        </mat-tab>
+        <mat-tab label="shoes">
+          <sq-button-grid-card
+            [selectedNorm]="avatar.avatar.shoesId" 
+            title="Shoes" 
+            [options]="avatarService.shoes"
+            (normButtonClicked)="updateShoes($event)">
+          </sq-button-grid-card> 
+        </mat-tab>
+     </mat-tab-group>
+  </div>
+</div>

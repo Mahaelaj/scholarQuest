@@ -1,0 +1,67 @@
+<sq-game #game (countdownDoneEvent)="countdownDone()" (playAgainEvent)="playAgain()" (changeGradeLevelEvent)="changeGradeLevel($event)" (openSidenavEvent)="pauseGame()" (closeSidenavEvent)="playGame()" height="1050px">
+    <div class="title">
+        <img class="title" *ngIf="gameType=='math'" src="../../../assets/games/pipes/math_title.png" [style.hidden]="gameType!='math'">
+        <img class="title" *ngIf="gameType=='vocab'" src="../../../assets/games/pipes/title.png" [style.hidden]="gameType!='vocab'">
+    </div>
+    <h3 class="score">Score: {{score}}</h3>
+    <table #gameTable>
+        <tr *ngFor="let rows of gameTableRows; let r = index">
+            <td>
+                <div class="square">
+                    <button mat-fab *ngIf='r==0' class="square fastForward" (click)="speedUpWater()"> 
+                        <img  src="../../../assets/clip-art/fast-forward.png" class="fastForward" draggable="false">
+                    </button>
+                    <div *ngIf='(r > 1 && r < 5)' (dragstart)="drag(r-2)" class="holdingBox square">
+                        <img draggable="true" [src]="pipesInHoldingBoxes[r-2].fullImg" class="holdingPipe">
+                    </div>
+                    <img class="square" *ngIf='r==5' src="../../../assets/games/pipes/recycle.png" (drop)="recyclePipe($event)" (dragover)="allowDrop($event)" (dragleave)="stopShaking()" (dragenter)="shakeRecycle($event)" [@shake]="shakeState" (@shake.done)="doneWithShake($event)" draggable="false"> 
+                </div>
+            </td>
+            <td>
+                <div class="startBox">
+                    <p></p>
+                </div>
+                <div class="startPipe" >
+                    <!--under pipe-->
+                    <img src="" class="gameboardSquare pipe underPipe" draggable="false">
+                    <!--water-->
+                    <div  class="gameboardSquare waterBlock" (webkitAnimationEnd)="getNextWaterPipe()" (animationend)="getNextWaterPipe()"></div>
+                    <!--special effect-->
+                    <img src="" class="gameboardSquare specialEffect noPointer"  draggable="false">
+                    <!--outer pipe-->
+                    <img src="" class="gameboardSquare pipe outerPipe" draggable="false">
+                </div>
+            </td>
+            <td *ngFor="let data of gameTableData; let d = index" (drop)="onDrop($event, d+2, r)" (dragover)="allowDrop($event)" (dragleave)="unhighlightGameBoardTile($event, d+2, r)" (dragenter)="highlightGameboardTile($event, d+2, r)">
+                <div class="dropBox square noPointer">
+                    <img class="terrain noPointer" [src]="gameBoard[d+2][r].terrain" draggable="false">
+                    <img src="" class="gameboardSquare pipe underPipe noPointer" [style.transform]='gameBoard[d+2][r].pipeRotation' draggable="false">
+                     <!--water-->
+                    <div class="gameboardSquare waterBlock noPointer" (webkitAnimationEnd)="getNextWaterPipe()" (animationend)="getNextWaterPipe()"></div>
+                    <div class="gameboardSquare waterBlock noPointer" (webkitAnimationEnd)="getNextWaterPipe()" (animationend)="getNextWaterPipe()"></div>
+                    <!--special effect-->
+                    <img src="" class="gameboardSquare specialEffect noPointer"  draggable="false">
+                    <img src="" class="gameboardSquare pipe outerPipe noPointer" [style.transform]='gameBoard[d+2][r].pipeRotation' draggable="false">
+                    <img src="../../../assets/games/pipes/pipe-fitting.png" class="pipeFitting noPointer"  draggable="false">
+                    <img src="../../../assets/games/pipes/pipe-fitting.png" class="pipeFitting noPointer"  draggable="false">
+                    <img *ngIf="d != 0 && d != 4" src="" class="square rock noPointer"  draggable="false"> 
+                </div>
+            </td>
+            <td>
+                <div class="endPipe" >
+                    <!--under pipe-->   
+                    <img src="" class="gameboardSquare underPipe pipe" draggable="false">
+                    <!--water-->
+                    <div src="" class="gameboardSquare waterBlock" (webkitAnimationEnd)="getNextWaterPipe()" (animationend)="getNextWaterPipe()"></div>
+                    <img src="" class="gameboardSquare specialEffect noPointer"  draggable="false">
+                    <!--outer pipe-->
+                    <img src="" class="gameboardSquare outerPipe  pipe" draggable="false">
+                </div>
+                <div class="finishBox">
+                    <p></p>
+                </div>
+            </td>
+        </tr>
+    </table>
+     <img class="waterSpill" [src]="spillImg" [@spill]="spillState"> 
+</sq-game>

@@ -1,0 +1,21 @@
+img {
+    display: block;
+    width: 90px;
+    height: 90px;
+    margin: auto;  
+    background-color: white;
+}
+
+mat-grid-tile {
+    border: solid grey 2px;
+}
+
+h1 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.options {
+    padding: 4px;
+}

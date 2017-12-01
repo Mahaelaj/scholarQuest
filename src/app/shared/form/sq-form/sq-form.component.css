@@ -1,0 +1,48 @@
+h1 {
+    text-align: center;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-weight: bold;
+}
+
+button {
+    background-color: Transparent;
+    background-image: url('../../../assets/form/scroll_button_border.png');
+    background-position: center;
+    background-size: 100px 75px;
+    width: 100px;
+    height: 75px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 150%;
+    margin-top: 10px;
+    cursor: url('../../../assets/form/quill.png'), pointer !important;
+}
+
+button:hover {
+    cursor: url('../../../assets/form/quill.png'), pointer !important;
+}
+
+.buttonWrapper {
+    text-align: center;
+    cursor: url('../../../assets/form/quill.png'), pointer !important;
+}
+
+.buttonWrapper:hover {
+    cursor: url('../../../assets/form/quill.png'), pointer !important;
+} 
+
+.scroll {
+    background-repeat: no-repeat;
+    background-image: url('../../../assets/form/scroll.png');
+    background-position: center;
+    background-size: 1000px 900px;
+    width: 1000px;
+    height: 900px;
+    cursor: url('../../../assets/form/quill.png'), pointer;
+}
+
+.scrollWrapper {
+    padding-top: 100px;
+    padding-left: 50px;
+    width: 600px;
+    margin: auto;
+}

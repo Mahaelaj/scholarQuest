@@ -1,0 +1,6 @@
+<mat-form-field class="select-wrapper" [formGroup]="form">
+    <input matInput [placeholder]="label" [formControlName]="name" [required]="required" #textInput [type]="isPassword ? 'password' : ''" (blur)="focused=false" (focus)="focused=true"/>
+    <mat-error *ngIf="showErrorMessage('invalid')">{{ label }} is invalid.</mat-error>
+    <mat-error *ngIf="showErrorMessage('different')">These passwords don't match.</mat-error>
+    <mat-error *ngIf="showErrorMessage('weak')">{{ label }} should contain 6 characters or more.</mat-error>
+</mat-form-field>
