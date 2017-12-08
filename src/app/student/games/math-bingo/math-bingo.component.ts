@@ -6,6 +6,7 @@ import { GameComponent } from '../game/game/game.component';
 
 // necessary to get phaser to work
 import * as Phaser from 'phaser-ce';
+import { Math } from 'phaser-ce';
 
 @Component({
     selector: 'sq-math-bingo',
@@ -16,21 +17,22 @@ export class MathBingoComponent implements AfterViewInit {
 
     @ViewChild('game') gameController: GameComponent;
 
-    private squares = [];
-    private equations = [];
-    private scoreText = "Score: 0"
-    private score = 0;
-    private clock;
-    private timeLeft;
-    private currEquation: {solution: number, problem: string} = {solution: null, problem: ''};
-    private secondsPerProblem = 20;
-    private totEquations = [];
-    private game: any;
-    private background;
-
-    // ngFor uses iternable objects and not numbers, so we put the numbers into an array
-    private numRows = Array(5);
-    private numCols = Array(5);
+    equations = [];
+    scoreText;
+    score = 0;
+    currEquation;
+    secondsPerProblem = 20;
+    totEquations = [];
+    game: any;
+    background;
+    moonCards = [];
+    problemText;
+    twinkleElems = [];
+    swirls = [];
+    timeLeft = 0;
+    timerText;
+    timer;
+    
 
     constructor(private renderer: Renderer, private apiService: ApiService) {}
 
@@ -66,239 +68,245 @@ export class MathBingoComponent implements AfterViewInit {
         )
     }
 
-    onAssetsLoaded() {
-
-    }
-
-    loadAssets(){
-        
+    async loadAssets(){
+        await this.game.load.image('bingo_card', '../../../assets/games/mathBingo/bingoCard.png');
+        await this.game.load.image('background', '../../../assets/games/mathBingo/background.png');
+        await this.game.load.image('crystal_ball_back', '../../../assets/games/mathBingo/crystalBallBack.png');
+        await this.game.load.image('crystal_ball_front', '../../../assets/games/mathBingo/crystalBallFront.png');
+        await this.game.load.image('crystal_ball_stand', '../../../assets/games/mathBingo/crystalBallStand.png');
+        await this.game.load.image('center_swirl', '../../../assets/games/mathBingo/centerSwirl.png');
+        await this.game.load.image('bingoCardCell', '../../../assets/games/mathBingo/bingoCardCell.png');
+        await this.game.load.image('moonCard1', '../../../assets/games/mathBingo/moonCards/moonCard1.png');
+        await this.game.load.image('moonCard2', '../../../assets/games/mathBingo/moonCards/moonCard2.png');
+        await this.game.load.image('moonCard3', '../../../assets/games/mathBingo/moonCards/moonCard3.png');
+        await this.game.load.image('moonCard4', '../../../assets/games/mathBingo/moonCards/moonCard4.png');
+        await this.game.load.image('moonCard5', '../../../assets/games/mathBingo/moonCards/moonCard5.png');
+        await this.game.load.image('moonCard6', '../../../assets/games/mathBingo/moonCards/moonCard6.png');
+        await this.game.load.image('moonCard7', '../../../assets/games/mathBingo/moonCards/moonCard7.png');
+        await this.game.load.image('moonCard8', '../../../assets/games/mathBingo/moonCards/moonCard8.png');
+        await this.game.load.image('moonCard9', '../../../assets/games/mathBingo/moonCards/moonCard9.png');
+        await this.game.load.image('moonCard10', '../../../assets/games/mathBingo/moonCards/moonCard10.png');
+        await this.game.load.image('moonCard11', '../../../assets/games/mathBingo/moonCards/moonCard11.png');
+        await this.game.load.image('moonCard12', '../../../assets/games/mathBingo/moonCards/moonCard12.png');
+        await this.game.load.image('moonCard13', '../../../assets/games/mathBingo/moonCards/moonCard13.png');
+        await this.game.load.image('moonCard14', '../../../assets/games/mathBingo/moonCards/moonCard14.png');
+        await this.game.load.image('moonCard15', '../../../assets/games/mathBingo/moonCards/moonCard15.png');
+        await this.game.load.image('moonCard16', '../../../assets/games/mathBingo/moonCards/moonCard16.png');
         this.game.load.start();
     };
 
-    update() {}
+    onAssetsLoaded() {
 
-    // initGameboard() {
-    //     this.initClock();
-    //     this.score = 0;
+        this.equations = _.sampleSize(this.totEquations, 24);
+        this.background.destroy();
+        this.game.add.image(0, 0, 'background');
 
-    //     // the equations that will be used in the game
-    //     var equations = this.totEquations.slice();
+        const centerSwirl = this.game.add.sprite(918.4, this.game.world.centerY, 'center_swirl');
+        centerSwirl.scale.setTo(.17, .17);
+        centerSwirl.anchor.setTo(.5, .5);
+        this.swirls.push(centerSwirl);
 
-    //     // set the text content of the squares
-    //     for (var i = 0; i < this.squares.length; i++){
-
-    //         // set the text content of the free square
-    //         if (i == (this.numRows.length * this.numCols.length - 1) / 2) {
-    //             this.squares[i].textContent = "FREE";
-
-    //             this.squares[i].selected = true;
-
-    //             // set the background color of the free tile
-    //             this.renderer.setElementStyle(this.squares[i], 'background-color', 'greenyellow');
-    //         }
-    //         else {            
-
-    //             // pick a random solution, we don't want the game board to look the same across games
-    //             var randIndex = Math.floor(Math.random() * equations.length);
-
-    //             // set the text content to be the solution of the 
-    //             this.squares[i].textContent = equations[randIndex].solution;
-
-    //             // remove the solution from the array, so the same solution doesn't show up more than once on the game board
-    //             // add the equation to the global equations array so we can use it later for the the problem
-    //             this.equations.push(equations.splice(randIndex, 1)[0]);
-    //         }
-    //     }
-
-    //     // display the problem
-    //     this.setProblem();
-    // }
-
-    // initClock() {
-
-    //     // set the displayed time to the amount of time given to answer the problem
-    //     this.timeLeft = this.secondsPerProblem;
-
-    //     // decrement the clock every second
-    //     this.clock = setInterval(x => {
-    //         this.timeLeft--;
-
-    //         // if the clock runs out of time ...
-    //         if (this.timeLeft == 0) {
-
-    //             this.setScore(-3);
-
-    //             // display a new problem
-    //             this.setProblem();
-
-    //             // reset the clock
-    //             this.timeLeft = this.secondsPerProblem;
-    //         }
-    //     }, 1000);
-    // }
-
-    // setScore(points) {
-
-    //     // add the score
-    //     this.score += points;
-
-    //     // don't let the score fall below 0
-    //     if (this.score < 0) {
-    //         this.score = 0;
-    //     }
-
-    //     // update the score text
-    //     this.scoreText = "Score: " + this.score;
-    // }
-
-    // setProblem() {
-
-    //     // updated the current equation 
-    //     this.currEquation =_.sample(this.equations);
-    // }
-
-    // checkCorrect(squarePosition: number) 
-    // {
-    //     if(this.squares[squarePosition].textContent == this.currEquation.solution) {
-
-    //         this.squares[squarePosition].selected = true;
-
-    //         // change the background color of the square to the correct color
-    //         this.renderer.setElementStyle(this.squares[squarePosition], "background-color", "green");
-
-    //         // add points
-    //         this.setScore(this.timeLeft);
-
-    //         // stop the clock
-    //         clearInterval(this.clock);
-
-    //         // if the game is won, do something
-    //         if(this.checkVerticalWin() || this.checkHorizontalWin() || this.checkBackwardDiagonalWin() || this.checkForwardDiagonalWin()){
-    //             this.timeLeft = 0;
-    //             this.currEquation.problem = "";
-
-    //             // open the dialog that will prompt the user to play again
-    //             this.gameController.updateCoins(this.score);
-    //             this.gameController.openWinGameDialog();
-    //         }
-
-    //         else {
-
-    //             // stop the equation from being used again
-    //             for(let i = 0; i < this.equations.length; ++i) {
-    //                 if(this.equations[i].solution == this.currEquation.solution) {
-    //                     this.equations.splice(i,1);
-    //                 };
-    //             }
-
-    //             // display a new problem
-    //             this.setProblem();
-
-    //         // reset the clock
-    //         this.initClock();
-    //         }                 
-    //     }
-    //     else{
+        for(let k = 0; k < 5; k++) {
+            const y = 45 + (k * 133.7)
+            for(let i = 0; i < 5; i++) {
+                const x = 588 + (i  * 133.5);
             
-    //         // subtract points if an incorrect solution was chosen
-    //         this.setScore(-2);
-    //     }
-    // }
+                if(k * 5 + i != 12) {
+                    const equationIndex = k * 5 + i > 12 ? k * 5 + i - 1 : k * 5 + i;
+                    const solution = this.equations[equationIndex].solution;
+                    let buttonText;
+                    const button = this.game.add.button(x, y, 'bingoCardCell', function() { this.tileSelected(solution, buttonText) }, this);
+                    const style = { font: "32px Arial", fill: '#ffffff', wordWrap: true, wordWrapWidth: button.width, align: "center", stroke: '#1f7eff', strokeThickness: 3 };
+                    buttonText = this.game.add.text(x + button.width / 2, y + button.height / 2, this.equations[equationIndex].solution, style);
+                    buttonText.tint = 0x2080ff;
+                    buttonText.anchor.set(0.5);
+                    buttonText.index = k * 5 + i
+                    this.twinkleElems.push(buttonText);
+                }
 
-    // /*
-    //  * check if there is a win via a column
-    //  */
-    // checkVerticalWin(): boolean {
-    //     for(let i = 0; i < this.numCols.length; i++){
-    //         var winCol = [];
-    //         for(let k = 0; k < this.numRows.length; k++){
-    //            if(this.squares[k * this.numCols.length + i].selected) winCol.push(this.squares[k * this.numCols.length + i]); 
-    //         }
-    //         if(winCol.length == this.numRows.length){ 
-    //              this.setTileColorWin(winCol);
-    //              return true;
-    //         } 
-    //     }
-    //     return false;
-    // }
+                const moonCard = 'moonCard' + ((k * 5 + i + 1) > 16 ? (k * 5 + i + 1) - 16 : (k * 5 + i + 1));
+                const moonCardSprite = this.game.add.image(x, y, moonCard);
+                moonCardSprite.scale.setTo(.25, .25);
+                this.moonCards.push(moonCardSprite);
+            }
+        }
 
-    // /*
-    //  * check if there is a win via a row 
-    //  */
-    // checkHorizontalWin(): boolean {
-    //     for(let i = 0; i < this.numRows.length; i < i++){
-    //         var winRow = [];
-    //         for(let k = 0; k < this.numCols.length; k < k++){
-    //           if(this.squares[i * this.numCols.length + k].selected) winRow.push(this.squares[i * this.numCols.length + k]); 
-    //         }
-    //         if(winRow.length == this.numCols.length){
-    //             this.setTileColorWin(winRow);
-    //             return true;
-    //         }  
-    //     }
-    //     return false;
-    // }
+        const bingoCard = this.game.add.image(this.game.world.width - 100, this.game.world.centerY, 'bingo_card');
+        bingoCard.scale.setTo(.33, .33);
+        bingoCard.anchor.setTo(1, .5);
 
-    // /*
-    //  * check if there is a win via a backward diaginal
-    //  */
-    // checkBackwardDiagonalWin(): boolean {
-    //     var winDiag = [];
-    //     for(let i = 0; i < this.numRows.length; i < i++){
-    //         if(this.squares[i * this.numCols.length + i].selected) winDiag.push(this.squares[i * this.numCols.length + i]);
-    //     }
-    //     if(winDiag.length == this.numCols.length){
-    //          this.setTileColorWin(winDiag);
-    //          return true;
-    //     }
-    //     return false;
-    // }
+        const crystalBallBack = this.game.add.image(125, this.game.world.centerY - 60, 'crystal_ball_back');
+        crystalBallBack.scale.setTo(.17, .17);
+        crystalBallBack.anchor.setTo(0, .5);
 
-    // /*
-    //  * check if there is a win via a backwards diaginal
-    //  */
-    // checkForwardDiagonalWin(): boolean {
-    //     var winDiag = [];
-    //     for(let i = 0; i < this.numRows.length; i < i++){
-    //         if(this.squares[i * this.numCols.length + (this.numCols.length - i - 1)].selected) winDiag.push(this.squares[i * this.numCols.length + (this.numCols.length - i - 1)]);
-    //     }
-    //     if(winDiag.length == this.numCols.length){
-    //          this.setTileColorWin(winDiag);
-    //          return true;
-    //     }
-    //      return false;
-    // }
+        this.problemText = this.game.add.text(crystalBallBack.x + (crystalBallBack.width / 2), crystalBallBack.y, '', { font: "32px Arial" });
+        this.problemText.anchor.setTo(.5, .5);
 
-    // /*
-    //  * change the colors of the winning tiles
-    //  */
-    // setTileColorWin(winTiles: any[]){
-    //     winTiles.forEach(tile => this.renderer.setElementStyle(tile, 'background-color', 'purple'));
-    // }
+        const crystalBallFront = this.game.add.image(125, this.game.world.centerY - 60, 'crystal_ball_front');
+        crystalBallFront.scale.setTo(.17, .17);
+        crystalBallFront.anchor.setTo(0, .5);
 
-    // /*
-    //  * restart the game 
-    //  */
-    // reload() {
+        const crystalBallStand = this.game.add.image(40, this.game.world.centerY + 215 , 'crystal_ball_stand');
+        crystalBallStand.scale.setTo(.17, .17);
+        crystalBallStand.anchor.setTo(0, .5);
 
-    //     for (var i = 0; i < this.squares.length; i++) {
-    //         this.renderer.setElementStyle(this.squares[i], 'background-color', null);
-    //         this.squares[i].selected = false;
-    //     }
+        const style = { font: "50px Arial", fill: "#884dd9", stroke: '#5000bd', strokeThickness: 5 };
+        this.scoreText = this.game.add.text(50, 25, "Score: 0", style);
+        this.timerText = this.game.add.text(325, 25, "Time: 0", style);
 
-    //     this.score = 0;
-    //     this.setScore(0);
+        // fade moonCards
+        for (let i = this.moonCards.length - 1; i >= 0; i--) {
+            const delayTime = (this.moonCards.length - 1 - i) / 5 * 1000
+            this.game.add.tween(this.moonCards[i]).to( { alpha: 0 }, 2000, 'Linear', true, delayTime);
+        }
 
-    //     // stop the clock
-    //     clearInterval(this.clock);
+        this.twinkleTint();
 
-    //     this.initGameboard();
-    // }
+            // Create our Timer
+            const twinkleTimer = this.game.time.create(false);
 
-    // changeGradeLevel(mathProbs) {
+            // Set a TimerEvent to occur after 2 seconds
+            twinkleTimer.loop(1000, this.twinkleTint, this);
 
-    //     this.totEquations = mathProbs;
-    //     this.reload();
-    // }
+            //  Start the timer running - this is important!
+            //  It won't start automatically, allowing you to hook it to button events and the like.
+            twinkleTimer.start();
+
+            this.setCurrentEquation(6000);
+    }
+
+    startTimer() {
+        this.timeLeft = this.secondsPerProblem;
+        this.updateTimerText();
+
+        this.timer = this.game.time.create(false);
+        this.timeLeft = 20;
+
+        // Set a TimerEvent to occur after 1 seconds
+        this.timer.loop(1000, this.decrementTimer, this);
+
+        // Start the timer running - this is important!
+        // It won't start automatically, allowing you to hook it to button events and the like.
+        this.timer.start();
+    }
+
+    decrementTimer() {
+        this.timeLeft --;
+        if (this.timeLeft >= 0) {
+            this.updateTimerText();
+            return; 
+        }
+        this.timer.destroy();
+        this.updateScore(-3);
+        this.updateProblem();
+    }
+
+    updateProblem() {
+        const tween = this.game.add.tween(this.problemText).to( { alpha: 0 }, 1000, 'Linear', true);
+        tween.onComplete.add(this.setCurrentEquation, this);
+    }
+
+    updateScore(points) {
+        this.score += points;
+        if (this.score < 0) this.score = 0;
+        this.scoreText.setText('Score: ' + this.score);
+    }
+    
+    updateTimerText() {
+        this.timerText.setText('Time: ' + this.timeLeft);
+    }
+
+    twinkleTint() {
+        const twinkleElem = this.twinkleElems.splice(_.random(0, this.twinkleElems.length - 1), 1)[0];
+        this.tweenTint(twinkleElem, 0x2080ff, 0xffffff, 2000, 0, () => {
+            this.tweenTint(twinkleElem, 0xffffff, 0x2080ff, 2000, 0, () => {
+                this.twinkleElems.push(twinkleElem);
+            })
+        });
+    }
+
+    tweenTint(obj, startColor, endColor, time = 250, delay = 0, callback = null) {
+
+        // check if is valid object
+        if (obj) {
+            // create a step object
+            let colorBlend = {
+                step: 0
+            };
+    
+            // create a tween to increment that step from 0 to 100.
+            let colorTween = this.game.add.tween(colorBlend).to({ step: 100 }, time, Phaser.Easing.Linear.None, delay);
+    
+            // add an anonomous function with lexical scope to change the tint, calling Phaser.Colour.interpolateColor
+            colorTween.onUpdateCallback(() => {
+                obj.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step);
+            });
+    
+            // set object to the starting colour
+            obj.tint = startColor;
+    
+            // if you passed a callback, add it to the tween on complete
+            if (callback) {
+                colorTween.onComplete.add(callback, this);
+            }
+    
+            // finally, start the tween
+            colorTween.start();
+        }
+    }
+
+    getTextColor(index) {
+        switch (index) {
+            case 0: return '#e400ff';
+            case 1: case 5: return '#6000ff'; 
+            case 2: case 6: case 10: return '#00baff'; 
+            case 3: case 7: case 11: case 15: return '#00ff12';
+            case 4: case 8: case 16: case 20: return '#f0ff00';
+            case 9: case 13: case 17: case 21: return '#ffb400';
+            case 14: case 18: case 22: return '#ff0000';
+            case 19: case 23: case 27: return '#fc00ff';
+            case 24: case 28: return '#000000';
+            case 25: return '#ffffff';
+        }
+    }
+
+    tileSelected(solution, buttonText) {
+        if (solution == this.currEquation.solution) {
+            if (this.timer) this.timer.destroy();
+            this.updateScore(5);
+            this.setSolutionToSwirl(buttonText);
+            this.updateProblem();
+            this.equations.splice(_.findIndex(this.equations, this.currEquation), 1);
+            return;
+        }
+        this.updateScore(-3);
+    }
+
+    setSolutionToSwirl(buttonText) {
+        let textTween = this.game.add.tween(buttonText.scale).to({x: .1, y: .1}, 1000, 'Linear', true);
+        const swirl = this.game.add.sprite(buttonText.x, buttonText.y, 'center_swirl');
+        swirl.scale.setTo(.01, .01);
+        swirl.anchor.setTo(.5, .5);
+        let swirlTween = this.game.add.tween(swirl.scale).to({x: .17, y: .17}, 1000, 'Linear', true);
+        this.swirls.push(swirl);
+        _.remove(this.twinkleElems, elem => (elem.index == buttonText.index));
+        
+        this.equations.splice(_.findIndex(this.equations, this.currEquation), 1);
+        this.twinkleElems.push(swirl);
+    }
+
+    setCurrentEquation(delayTime = 1000) {
+        this.currEquation = _.sample(this.equations);
+        this.problemText.alpha = 0;
+        this.problemText.setText(this.currEquation.problem);
+        const tween = this.game.add.tween(this.problemText).to( { alpha: 1 }, 1000, 'Linear', true, delayTime);
+        tween.onComplete.add(this.startTimer, this);
+    }
+
+    update() {
+        this.swirls.forEach(swirl => {
+            swirl.angle += 1;
+        });
+    }
 }
 

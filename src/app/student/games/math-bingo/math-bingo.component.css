@@ -21,11 +21,18 @@ th, td{
     text-align: center;
 }
 
-span{
+span {
     background-color: green;
     width: max;
 }
 
-p{
+p {
     text-align: center;
 }
+
+.title {
+    margin: auto;
+    display: block;
+    margin-bottom: 30px;
+    height: 200px;
+  }

@@ -328,6 +328,7 @@ export class AppleDropComponent implements AfterViewInit {
 
   // initial setup of the physics system
   setPhysics() {
+    
     //  Enable P2
     this.game.physics.startSystem(PhaserGame.Physics.P2JS);
     this.game.physics.p2.gravity.y = this.gravity;
