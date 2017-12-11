@@ -32,8 +32,9 @@ export class MathBingoComponent implements AfterViewInit {
     timeLeft = 0;
     timerText;
     timer;
-    
-
+    gameBoard = [];
+    twinkleTimer;
+    twinkleTweens = { fadeOut: null, fadeIn: null };
     constructor(private renderer: Renderer, private apiService: ApiService) {}
 
     /**
@@ -108,6 +109,7 @@ export class MathBingoComponent implements AfterViewInit {
 
         for(let k = 0; k < 5; k++) {
             const y = 45 + (k * 133.7)
+            this.gameBoard.push([{ selected: false }, { selected: false }, { selected: false }, { selected: false }, { selected: false }]);
             for(let i = 0; i < 5; i++) {
                 const x = 588 + (i  * 133.5);
             
@@ -115,7 +117,7 @@ export class MathBingoComponent implements AfterViewInit {
                     const equationIndex = k * 5 + i > 12 ? k * 5 + i - 1 : k * 5 + i;
                     const solution = this.equations[equationIndex].solution;
                     let buttonText;
-                    const button = this.game.add.button(x, y, 'bingoCardCell', function() { this.tileSelected(solution, buttonText) }, this);
+                    const button = this.game.add.button(x, y, 'bingoCardCell', function() { this.tileSelected(solution, buttonText, { col: i, row: k }) }, this);
                     const style = { font: "32px Arial", fill: '#ffffff', wordWrap: true, wordWrapWidth: button.width, align: "center", stroke: '#1f7eff', strokeThickness: 3 };
                     buttonText = this.game.add.text(x + button.width / 2, y + button.height / 2, this.equations[equationIndex].solution, style);
                     buttonText.tint = 0x2080ff;
@@ -130,7 +132,9 @@ export class MathBingoComponent implements AfterViewInit {
                 this.moonCards.push(moonCardSprite);
             }
         }
-
+        this.gameBoard[2][2].selected = true;
+        this.gameBoard[2][2].swirl = centerSwirl;
+        
         const bingoCard = this.game.add.image(this.game.world.width - 100, this.game.world.centerY, 'bingo_card');
         bingoCard.scale.setTo(.33, .33);
         bingoCard.anchor.setTo(1, .5);
@@ -162,17 +166,17 @@ export class MathBingoComponent implements AfterViewInit {
 
         this.twinkleTint();
 
-            // Create our Timer
-            const twinkleTimer = this.game.time.create(false);
+        // Create our Timer
+        this.twinkleTimer = this.game.time.create(false);
 
-            // Set a TimerEvent to occur after 2 seconds
-            twinkleTimer.loop(1000, this.twinkleTint, this);
+        // Set a TimerEvent to occur after 2 seconds
+        this.twinkleTimer.loop(1000, this.twinkleTint, this);
 
-            //  Start the timer running - this is important!
-            //  It won't start automatically, allowing you to hook it to button events and the like.
-            twinkleTimer.start();
+        //  Start the timer running - this is important!
+        //  It won't start automatically, allowing you to hook it to button events and the like.
+        this.twinkleTimer.start();
 
-            this.setCurrentEquation(6000);
+        this.setCurrentEquation(6000);
     }
 
     startTimer() {
@@ -218,41 +222,42 @@ export class MathBingoComponent implements AfterViewInit {
 
     twinkleTint() {
         const twinkleElem = this.twinkleElems.splice(_.random(0, this.twinkleElems.length - 1), 1)[0];
-        this.tweenTint(twinkleElem, 0x2080ff, 0xffffff, 2000, 0, () => {
-            this.tweenTint(twinkleElem, 0xffffff, 0x2080ff, 2000, 0, () => {
+        this.twinkleTweens.fadeIn = this.tweenTint(twinkleElem, 0x2080ff, 0xffffff, 2000, 0, () => {
+            this.twinkleTweens.fadeOut = this.tweenTint(twinkleElem, 0xffffff, 0x2080ff, 2000, 0, () => {
                 this.twinkleElems.push(twinkleElem);
             })
         });
     }
 
+    // TODO: fix multi click error
+
     tweenTint(obj, startColor, endColor, time = 250, delay = 0, callback = null) {
 
-        // check if is valid object
-        if (obj) {
-            // create a step object
-            let colorBlend = {
-                step: 0
-            };
-    
-            // create a tween to increment that step from 0 to 100.
-            let colorTween = this.game.add.tween(colorBlend).to({ step: 100 }, time, Phaser.Easing.Linear.None, delay);
-    
-            // add an anonomous function with lexical scope to change the tint, calling Phaser.Colour.interpolateColor
-            colorTween.onUpdateCallback(() => {
-                obj.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step);
-            });
-    
-            // set object to the starting colour
-            obj.tint = startColor;
-    
-            // if you passed a callback, add it to the tween on complete
-            if (callback) {
-                colorTween.onComplete.add(callback, this);
-            }
-    
-            // finally, start the tween
-            colorTween.start();
+        // create a step object
+        let colorBlend = {
+            step: 0
+        };
+
+        // create a tween to increment that step from 0 to 100.
+        let colorTween = this.game.add.tween(colorBlend).to({ step: 100 }, time, Phaser.Easing.Linear.None, delay);
+
+        // add an anonomous function with lexical scope to change the tint, calling Phaser.Colour.interpolateColor
+        colorTween.onUpdateCallback(() => {
+            obj.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step);
+        });
+
+        // set object to the starting colour
+        obj.tint = startColor;
+
+        // if you passed a callback, add it to the tween on complete
+        if (callback) {
+            colorTween.onComplete.add(callback, this);
         }
+
+        // finally, start the tween
+        colorTween.start();
+
+        return colorTween;
     }
 
     getTextColor(index) {
@@ -270,16 +275,90 @@ export class MathBingoComponent implements AfterViewInit {
         }
     }
 
-    tileSelected(solution, buttonText) {
+    tileSelected(solution, buttonText, buttonIndex) {
         if (solution == this.currEquation.solution) {
             if (this.timer) this.timer.destroy();
             this.updateScore(5);
-            this.setSolutionToSwirl(buttonText);
+            const swirl = this.setSolutionToSwirl(buttonText);
             this.updateProblem();
             this.equations.splice(_.findIndex(this.equations, this.currEquation), 1);
+            this.gameBoard[buttonIndex.col][buttonIndex.row].selected = true;
+            this.gameBoard[buttonIndex.col][buttonIndex.row].swirl = swirl.swirl;
+            const selectedSwirls = this.checkForWin();
+            if (selectedSwirls) {
+                swirl.swirlTween.onComplete.add(function() { this.setWin(selectedSwirls) }, this);
+            }
             return;
         }
         this.updateScore(-3);
+    }
+
+    checkForWin() {
+        let winTracker = true;
+        let selectedSwirls = [];
+        
+        // check for horizontal win
+        for (let row = 0; row < this.gameBoard[0].length; row++) {
+            winTracker = true;
+            selectedSwirls = [];
+            for (let col = 0; col < this.gameBoard.length; col++) {
+                if (!this.gameBoard[col][row].selected) winTracker = false; 
+                selectedSwirls.push(this.gameBoard[col][row].swirl);
+            }
+            if (winTracker) {
+                return selectedSwirls;
+            }
+        }
+
+        // check for a vertical win
+        for (let col = 0; col < this.gameBoard.length; col++) {
+            winTracker = true;
+            selectedSwirls = [];
+            for (let row = 0; row < this.gameBoard[0].length; row++) {
+                if (!this.gameBoard[col][row].selected) winTracker = false; 
+                selectedSwirls.push(this.gameBoard[col][row].swirl);
+            }
+            if (winTracker) {
+                return selectedSwirls;
+            }
+        }
+
+        winTracker = true;
+        selectedSwirls = [];
+        
+        // check for downward sloping diagonal win
+        for (let i = 0; i < this.gameBoard.length; i++) {
+            if (!this.gameBoard[i][i].selected) winTracker = false;
+            selectedSwirls.push(this.gameBoard[i][i].swirl);
+        }
+        if (winTracker) {
+            return selectedSwirls;
+        }
+        
+        winTracker = true;
+        selectedSwirls = [];
+        
+        // check for downward sloping diagonal win
+        for (let i = 0; i < this.gameBoard.length; i++) {
+            if (!this.gameBoard[i][this.gameBoard.length - 1 - i].selected) winTracker = false;
+            selectedSwirls.push(this.gameBoard[i][this.gameBoard.length - 1 - i].swirl);
+            
+        }
+        if (winTracker) {
+            return selectedSwirls;
+        }
+
+        return null;
+    }
+
+    setWin(selectedSwirls) {
+        this.twinkleTimer.destroy();
+        // Todo: remove tweens
+        this.game.tweens.removeAll();
+        selectedSwirls.forEach( swirl => {
+            // TODO: Change to green
+            swirl.tint = 0xffffff;
+        });
     }
 
     setSolutionToSwirl(buttonText) {
@@ -291,8 +370,8 @@ export class MathBingoComponent implements AfterViewInit {
         this.swirls.push(swirl);
         _.remove(this.twinkleElems, elem => (elem.index == buttonText.index));
         
-        this.equations.splice(_.findIndex(this.equations, this.currEquation), 1);
         this.twinkleElems.push(swirl);
+        return { swirl: swirl, swirlTween: swirlTween };
     }
 
     setCurrentEquation(delayTime = 1000) {
