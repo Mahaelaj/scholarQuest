@@ -103,7 +103,6 @@ export class MathBingoComponent implements AfterViewInit {
     };
 
     onAssetsLoaded() {
-
         this.equations = _.sampleSize(this.totEquations, 24);
         
         this.background.destroy();
@@ -379,7 +378,7 @@ export class MathBingoComponent implements AfterViewInit {
         this.endGameDialog.dialogBackground = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'dialog_background');
         
         this.endGameDialog.dialogBackground.anchor.setTo(.5, .5);
-        this.endGameDialog.dialogText = this.game.add.text(this.game.width/2, this.game.height/2 - 50, `GAME OVER\nYou Won\n${this.score} Coins`, { 
+        this.endGameDialog.dialogText = this.game.add.text(this.game.width/2, this.game.height/2 - 50, `Well Done\nYou Won\n${this.score} Coins`, { 
             font: "50px Arial",
             fill: "#5000bd",
             wordWrap: true,
