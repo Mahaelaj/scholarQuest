@@ -1,41 +1,5 @@
-<img src="../../../assets/games/mathBingo/title.jpg" class="title">
+<img src="../../../assets/games/mathBingo/title.png" class="title">
 
-<sq-game #game (playAgainEvent)="reload()" (changeGradeLevelEvent)="changeGradeLevel($event)" type="math" height="950px">
-    <div id="phaser-game-parent"></div>
-<!--     
-     <div class="container" fxLayout="row" fxFlex="100" fxLayout.xs="column" fxLayoutGap="25px" fxLayoutAlign="center">
-        <div fxLayoutGap="25px" fxFlex="25">
-            <br>
-            <br>
-            <br>
-            <br>
-            <h3>{{timeLeft}}</h3>
-        </div>
-        <div fxLayoutGap="25px" fxFlex="50">
-            <h1>Math Bingo</h1>
-            <h3 id="score">{{scoreText}}</h3>
-            <span>
-                <table>
-                    <tr>
-                        <th width="20%">B</th>
-                        <th width="20%">I</th>
-                        <th width="20%">N</th>
-                        <th width="20%">G</th>
-                        <th width="20%">O</th>
-                    </tr>
-                    <tr *ngFor="let row of numRows; let r = index;">
-                        <td *ngFor="let cols of numCols; let c = index;" (click)="checkCorrect(r * numCols.length + c)"></td>
-                    </tr>
-                </table>
-            </span>
-            <p><a (click)="reload()" id="reload" md-button>Click Here</a> to create a new card</p>
-        </div>
-        <div fxLayoutGap="25px" fxFlex="25">
-            <br>
-            <br>
-            <br>
-            <br>
-            <h3>{{currEquation.problem}}</h3>
-        </div>
-    </div>  -->
+<sq-game #game (changeGradeLevelEvent)="changeGradeLevel($event)" type="math" height="950px">
+    <div class="game" id="phaser-game-parent"></div>
 </sq-game>

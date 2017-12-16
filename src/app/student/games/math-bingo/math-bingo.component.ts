@@ -34,7 +34,10 @@ export class MathBingoComponent implements AfterViewInit {
     timer;
     gameBoard = [];
     twinkleTimer;
-    twinkleTweens = { fadeOut: null, fadeIn: null };
+    centerSwirl;
+    endGameDialog = { dialogBackground: null, dialogText: null, playAgainButton: null, buttonText: null };
+    buttonTexts = [];
+    canSelectTile = false;
     constructor(private renderer: Renderer, private apiService: ApiService) {}
 
     /**
@@ -50,6 +53,7 @@ export class MathBingoComponent implements AfterViewInit {
 
     create() {
         
+        this.game.stage.disableVisibilityChange = true;
         // display the background
         this.background = this.game.add.image(0, 0, 'loading_spritesheet');
         const load = this.background.animations.add('load');
@@ -71,12 +75,14 @@ export class MathBingoComponent implements AfterViewInit {
 
     async loadAssets(){
         await this.game.load.image('bingo_card', '../../../assets/games/mathBingo/bingoCard.png');
-        await this.game.load.image('background', '../../../assets/games/mathBingo/background.png');
+        await this.game.load.image('background', '../../../assets/games/mathBingo/background.jpg');
         await this.game.load.image('crystal_ball_back', '../../../assets/games/mathBingo/crystalBallBack.png');
         await this.game.load.image('crystal_ball_front', '../../../assets/games/mathBingo/crystalBallFront.png');
         await this.game.load.image('crystal_ball_stand', '../../../assets/games/mathBingo/crystalBallStand.png');
-        await this.game.load.image('center_swirl', '../../../assets/games/mathBingo/centerSwirl.png');
+        await this.game.load.image('dialog_background', '../../../assets/games/mathBingo/dialogBackground.png');
+        await this.game.load.image('swirl', '../../../assets/games/mathBingo/swirlWhite.png');
         await this.game.load.image('bingoCardCell', '../../../assets/games/mathBingo/bingoCardCell.png');
+        await this.game.load.image('gold_button', '../../../assets/games/mathBingo/goldButton.jpg');
         await this.game.load.image('moonCard1', '../../../assets/games/mathBingo/moonCards/moonCard1.png');
         await this.game.load.image('moonCard2', '../../../assets/games/mathBingo/moonCards/moonCard2.png');
         await this.game.load.image('moonCard3', '../../../assets/games/mathBingo/moonCards/moonCard3.png');
@@ -99,14 +105,17 @@ export class MathBingoComponent implements AfterViewInit {
     onAssetsLoaded() {
 
         this.equations = _.sampleSize(this.totEquations, 24);
+        
         this.background.destroy();
         this.game.add.image(0, 0, 'background');
 
-        const centerSwirl = this.game.add.sprite(918.4, this.game.world.centerY, 'center_swirl');
-        centerSwirl.scale.setTo(.17, .17);
-        centerSwirl.anchor.setTo(.5, .5);
-        this.swirls.push(centerSwirl);
+        this.centerSwirl = this.game.add.sprite(918.4, this.game.world.centerY, 'swirl');
+        this.centerSwirl.scale.setTo(.17, .17);
+        this.centerSwirl.anchor.setTo(.5, .5);
+        this.centerSwirl.tint = 0x5000bd;
 
+        this.swirls.push(this.centerSwirl);
+        
         for(let k = 0; k < 5; k++) {
             const y = 45 + (k * 133.7)
             this.gameBoard.push([{ selected: false }, { selected: false }, { selected: false }, { selected: false }, { selected: false }]);
@@ -115,14 +124,14 @@ export class MathBingoComponent implements AfterViewInit {
             
                 if(k * 5 + i != 12) {
                     const equationIndex = k * 5 + i > 12 ? k * 5 + i - 1 : k * 5 + i;
-                    const solution = this.equations[equationIndex].solution;
                     let buttonText;
-                    const button = this.game.add.button(x, y, 'bingoCardCell', function() { this.tileSelected(solution, buttonText, { col: i, row: k }) }, this);
+                    const button = this.game.add.button(x, y, 'bingoCardCell', function() { this.tileSelected(buttonText, { col: i, row: k }) }, this);
                     const style = { font: "32px Arial", fill: '#ffffff', wordWrap: true, wordWrapWidth: button.width, align: "center", stroke: '#1f7eff', strokeThickness: 3 };
                     buttonText = this.game.add.text(x + button.width / 2, y + button.height / 2, this.equations[equationIndex].solution, style);
                     buttonText.tint = 0x2080ff;
                     buttonText.anchor.set(0.5);
                     buttonText.index = k * 5 + i
+                    this.buttonTexts.push(buttonText);
                     this.twinkleElems.push(buttonText);
                 }
 
@@ -133,7 +142,7 @@ export class MathBingoComponent implements AfterViewInit {
             }
         }
         this.gameBoard[2][2].selected = true;
-        this.gameBoard[2][2].swirl = centerSwirl;
+        this.gameBoard[2][2].swirl = this.centerSwirl;
         
         const bingoCard = this.game.add.image(this.game.world.width - 100, this.game.world.centerY, 'bingo_card');
         bingoCard.scale.setTo(.33, .33);
@@ -158,31 +167,36 @@ export class MathBingoComponent implements AfterViewInit {
         this.scoreText = this.game.add.text(50, 25, "Score: 0", style);
         this.timerText = this.game.add.text(325, 25, "Time: 0", style);
 
-        // fade moonCards
-        for (let i = this.moonCards.length - 1; i >= 0; i--) {
-            const delayTime = (this.moonCards.length - 1 - i) / 5 * 1000
-            this.game.add.tween(this.moonCards[i]).to( { alpha: 0 }, 2000, 'Linear', true, delayTime);
-        }
+        this.fadeMooncards();
 
-        this.twinkleTint();
-
-        // Create our Timer
-        this.twinkleTimer = this.game.time.create(false);
-
-        // Set a TimerEvent to occur after 2 seconds
-        this.twinkleTimer.loop(1000, this.twinkleTint, this);
-
-        //  Start the timer running - this is important!
-        //  It won't start automatically, allowing you to hook it to button events and the like.
-        this.twinkleTimer.start();
+        this.startTwinkleTint();
 
         this.setCurrentEquation(6000);
     }
 
+    startTwinkleTint() {
+        
+        this.twinkleTimer = this.game.time.create(false);
+
+        this.twinkleTimer.loop(1000, this.twinkleTint, this);
+
+        this.twinkleTimer.start();
+    }
+
+    fadeMooncards() {
+        for (let i = this.moonCards.length - 1; i >= 0; i--) {
+            const delayTime = (this.moonCards.length - 1 - i) / 5 * 1000
+            this.game.add.tween(this.moonCards[i]).to( { alpha: 0 }, 2000, 'Linear', true, delayTime);
+        }
+    }
+
     startTimer() {
+        this.canSelectTile = true;
+
         this.timeLeft = this.secondsPerProblem;
         this.updateTimerText();
 
+        if (this.timer) this.timer.destroy();
         this.timer = this.game.time.create(false);
         this.timeLeft = 20;
 
@@ -221,16 +235,16 @@ export class MathBingoComponent implements AfterViewInit {
     }
 
     twinkleTint() {
+        if (!this.twinkleElems.length) return;
         const twinkleElem = this.twinkleElems.splice(_.random(0, this.twinkleElems.length - 1), 1)[0];
-        this.twinkleTweens.fadeIn = this.tweenTint(twinkleElem, 0x2080ff, 0xffffff, 2000, 0, () => {
-            this.twinkleTweens.fadeOut = this.tweenTint(twinkleElem, 0xffffff, 0x2080ff, 2000, 0, () => {
+        this.tweenTint(twinkleElem, 0x2080ff, 0xffffff, 2000, 0, () => {
+            this.tweenTint(twinkleElem, 0xffffff, 0x2080ff, 2000, 0, () => {
                 this.twinkleElems.push(twinkleElem);
             })
         });
     }
 
     // TODO: fix multi click error
-
     tweenTint(obj, startColor, endColor, time = 250, delay = 0, callback = null) {
 
         // create a step object
@@ -275,18 +289,22 @@ export class MathBingoComponent implements AfterViewInit {
         }
     }
 
-    tileSelected(solution, buttonText, buttonIndex) {
-        if (solution == this.currEquation.solution) {
+    tileSelected(buttonText, buttonIndex) {
+        if (buttonText.text == this.currEquation.solution) {
+            if (!this.canSelectTile) return;
+            this.canSelectTile = false;
             if (this.timer) this.timer.destroy();
             this.updateScore(5);
             const swirl = this.setSolutionToSwirl(buttonText);
-            this.updateProblem();
             this.equations.splice(_.findIndex(this.equations, this.currEquation), 1);
             this.gameBoard[buttonIndex.col][buttonIndex.row].selected = true;
             this.gameBoard[buttonIndex.col][buttonIndex.row].swirl = swirl.swirl;
             const selectedSwirls = this.checkForWin();
             if (selectedSwirls) {
                 swirl.swirlTween.onComplete.add(function() { this.setWin(selectedSwirls) }, this);
+            }
+            else { 
+                this.updateProblem();
             }
             return;
         }
@@ -352,24 +370,103 @@ export class MathBingoComponent implements AfterViewInit {
     }
 
     setWin(selectedSwirls) {
-        this.twinkleTimer.destroy();
-        // Todo: remove tweens
+
         this.game.tweens.removeAll();
         selectedSwirls.forEach( swirl => {
-            // TODO: Change to green
-            swirl.tint = 0xffffff;
+            swirl.tint = 0x2ecc71;
         });
+        
+        this.endGameDialog.dialogBackground = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'dialog_background');
+        
+        this.endGameDialog.dialogBackground.anchor.setTo(.5, .5);
+        this.endGameDialog.dialogText = this.game.add.text(this.game.width/2, this.game.height/2 - 50, `GAME OVER\nYou Won\n${this.score} Coins`, { 
+            font: "50px Arial",
+            fill: "#5000bd",
+            wordWrap: true,
+            wordWrapWidth: this.endGameDialog.dialogBackground.width,
+            align: "center"
+          });
+          this.endGameDialog.dialogText.anchor.set(0.5);
+      
+          this.endGameDialog.playAgainButton = this.game.add.button(this.game.width/2, this.game.height/2 + 100, 'gold_button', this.onPlayAgainButton, this);
+          this.endGameDialog.playAgainButton.anchor.set(0.5);
+          this.endGameDialog.playAgainButton.scale.setTo(1.5, 1.5);
+          this.endGameDialog.buttonText = this.game.add.text(this.game.width/2, this.game.height/2 + 100, 'Play Again', {
+            font: "25px Arial",
+            fill: "#5000bd",
+            wordWrap: true,
+            wordWrapWidth: this.endGameDialog.playAgainButton.width,
+            align: "center"
+          });
+          this.endGameDialog.buttonText.anchor.set(0.5);
+          this.gameController.updateCoins(this.score);
+    }
+
+    onPlayAgainButton() {
+
+        this.endGameDialog.buttonText.destroy();
+        this.endGameDialog.dialogBackground.destroy();
+        this.endGameDialog.dialogText.destroy();
+        this.endGameDialog.playAgainButton.destroy();
+
+        this.reload();
+    }
+
+    reload() {
+             
+        this.twinkleTimer.destroy();
+         
+        this.score = 0;
+        this.updateScore(0);
+
+        this.swirls = [];
+        this.swirls.push(this.centerSwirl);
+        
+        for (let i = 0; i < this.gameBoard.length; i++) {
+            for (let k = 0; k < this.gameBoard[i].length; k++) {
+                if (!(i == 2 && k == 2)) {
+                    this.gameBoard[i][k].selected = false;
+                    if (this.gameBoard[i][k].swirl) {
+                        this.gameBoard[i][k].swirl.destroy();
+                        this.gameBoard[i][k].swirl = null;
+                    }
+                }
+            }
+        }
+
+        // this.buttonTexts.forEach(text => {text.tint = 0x2080ff; });
+     
+        this.twinkleElems = _.map(this.buttonTexts);
+        this.startTwinkleTint();
+
+        this.moonCards.forEach(moonCard => this.game.add.tween(moonCard).to( { alpha: 1 }, 2000, 'Linear', true, 0))
+
+        this.game.time.events.add(2000, this.setupBoard, this);
+    }
+
+    setupBoard() {
+        this.equations = _.sampleSize(this.totEquations, 24);
+
+        for (let i = 0; i < this.buttonTexts.length; i++) {
+            this.buttonTexts[i].scale.setTo(1);
+            this.buttonTexts[i].setText(this.equations[i].solution);
+        }
+
+        this.centerSwirl.tint = 0x5000bd;
+        this.fadeMooncards();
+
+        this.setCurrentEquation(6000);
     }
 
     setSolutionToSwirl(buttonText) {
         let textTween = this.game.add.tween(buttonText.scale).to({x: .1, y: .1}, 1000, 'Linear', true);
-        const swirl = this.game.add.sprite(buttonText.x, buttonText.y, 'center_swirl');
+        const swirl = this.game.add.sprite(buttonText.x, buttonText.y, 'swirl');
+        swirl.tint = 0x2080ff;
         swirl.scale.setTo(.01, .01);
         swirl.anchor.setTo(.5, .5);
         let swirlTween = this.game.add.tween(swirl.scale).to({x: .17, y: .17}, 1000, 'Linear', true);
         this.swirls.push(swirl);
         _.remove(this.twinkleElems, elem => (elem.index == buttonText.index));
-        
         this.twinkleElems.push(swirl);
         return { swirl: swirl, swirlTween: swirlTween };
     }
@@ -386,6 +483,13 @@ export class MathBingoComponent implements AfterViewInit {
         this.swirls.forEach(swirl => {
             swirl.angle += 1;
         });
+    }
+
+    changeGradeLevel(equations) {
+        this.game.tweens.removeAll();
+        this.totEquations = equations;
+        this.reload();
+        if (this.timer) this.timer.destroy();
     }
 }
 
