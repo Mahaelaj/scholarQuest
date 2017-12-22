@@ -16,11 +16,19 @@ export class PipesComponent implements AfterViewInit {
     game: any;
     background: any;
     totProblems: any[];
-    equations: any[];
+    problems: any[];
     terrainImages: any[];
     terrainTopImages: any[];
     pipeStorage = [];
     pipes: any;
+    curProblem: any;
+    curPipe = { x: -1, y: 0 };
+    startWater: any;
+    draggingPipe = false;
+    gameBoard = [];
+    hoverTile: any;
+    tileLength = 142.5;
+    waterDirection = 'right';
 
     /**
     * start the game
@@ -85,6 +93,7 @@ export class PipesComponent implements AfterViewInit {
         await this.game.load.image('terrain_grass3', '../../../assets/games/pipes/terrain_grass_3.jpg');
         await this.game.load.image('title', '../../../assets/games/pipes/title.png');
         await this.game.load.image('water_spill', '../../../assets/games/pipes/waterSpill.png');
+        await this.game.load.image('board_background', '../../../assets/games/pipes/board_background.png');
         this.game.load.start();
     };
 
@@ -93,32 +102,177 @@ export class PipesComponent implements AfterViewInit {
         this.terrainTopImages = [ 'terrain_grass1', 'terrain_grass2', 'terrain_grass3' ];
 
         this.pipes = [
-            { fullImg: 'corner_full', rotation: 0 },
-            { fullImg: 'corner_full', rotation: 90 },
-            { fullImg: 'corner_full', rotation: 180 },
-            { fullImg: 'corner_full', rotation: 270 },
-            { fullImg: 'straight_full', rotation: 0 },
-            { fullImg: 'straight_full', rotation: 180 },
+            { fullImg: 'corner_full', rotation: 0, outer_img: 'corner_outer', under_img: 'corner_under', connectors: [ 'left', 'up' ] },
+            { fullImg: 'corner_full', rotation: 90, outer_img: 'corner_outer', under_img: 'corner_under', connectors: [ 'up', 'right' ] },
+            { fullImg: 'corner_full', rotation: 180, outer_img: 'corner_outer', under_img: 'corner_under', connectors: [ 'right', 'down' ] },
+            { fullImg: 'corner_full', rotation: 270, outer_img: 'corner_outer', under_img: 'corner_under', connectors: [ 'down', 'left' ] },
+            { fullImg: 'straight_full', rotation: 0, outer_img: 'straight_outer', under_img: 'straight_under', connectors: [ 'left', 'right' ] },
+            { fullImg: 'straight_full', rotation: 90, outer_img: 'straight_outer', under_img: 'straight_under', connectors: [ 'up', 'down' ] },
         ];
 
-        this.pipeStorage = _.sampleSize(this.pipes, 3);
-
-        const tileLength = 145;
         this.background.destroy();
+
+        const boardbackground = this.game.add.image(this.game.world.centerX, this.game.world.centerY, 'board_background').anchor.setTo(0.5);
+
         this.game.stage.backgroundColor = "#4488AA";
         for (let y = 0; y < 5; y++){
+            this.gameBoard.push([]);
             for (let x = 0; x < 5; x++) {
-                const boardTile = this.game.add.image(this.game.world.centerX + (x - 2) * tileLength, this.game.world.centerY + (y - 2) * tileLength, !y ? _.sample(this.terrainTopImages) : _.sample(this.terrainImages));
+                const boardTile = this.game.add.image(this.game.world.centerX + (x - 2) * this.tileLength + (x - 2) * 2.5, this.game.world.centerY + (y - 2) * this.tileLength  + (y - 2) * 2.5, !y ? _.sample(this.terrainTopImages) : _.sample(this.terrainImages));
                 boardTile.anchor.setTo(0.5);
-                boardTile.width = tileLength;
-                boardTile.height = tileLength;
+                boardTile.width = this.tileLength;
+                boardTile.height = this.tileLength;
+                boardTile.inputEnabled = true;
+                this.gameBoard[y].push({ tile: boardTile });
             }
         }
+        for(let i = 0; i < 3; i++) {
+            const pipe = this.addPipeToStorage(i);
+            this.pipeStorage.push(pipe);
+        }
 
-        for
+        // todo: each of the problems should have different solutions
+
+        // todo: make sure at least one of the starting pipes has a left connector
+
+        this.problems = _.sampleSize(this.totProblems, 3);
+        this.curProblem = _.sample(this.problems);
+
+        const startRow = _.random(0, 4);
+        this.curPipe.y = startRow;
+        const startPipeUnder = this.game.add.image(this.game.world.centerX  - 3 * this.tileLength, this.game.world.centerY + (startRow - 2) * this.tileLength, 'end_pipe_under');
+        startPipeUnder.anchor.set(0.5);
+        startPipeUnder.width = this.tileLength;
+        startPipeUnder.height = this.tileLength;
+        
+        const startWaterBitmap = this.game.add.bitmapData(1, 50);
+        startWaterBitmap.fill(64, 164, 223, 1);
+        this.startWater = this.game.add.sprite(this.game.world.centerX  - 3 * this.tileLength, this.game.world.centerY + (startRow - 2) * this.tileLength, startWaterBitmap);
+        this.startWater.anchor.set(0, 0.5);
+
+        const startPipeOuter = this.game.add.image(this.game.world.centerX  - 3 * this.tileLength, this.game.world.centerY +  (startRow - 2) * this.tileLength, 'end_pipe_outer');
+        startPipeOuter.anchor.set(0.5);
+        startPipeOuter.width = this.tileLength;
+        startPipeOuter.height = this.tileLength;
+
+        const style = { font: "32px Arial", fill: '#ffffff', wordWrap: true, wordWrapWidth: this.tileLength, align: "center", stroke: '#1f7eff', strokeThickness: 3 };
+        const problemText = this.game.add.text(195, this.game.world.centerY + (startRow - 2) * this.tileLength, this.curProblem.solution, style);
+        problemText.anchor.set(0.5);
+
+        const waterTween = this.game.add.tween(this.startWater).to( { width: 70 }, 10000, 'Linear', true);
+        waterTween.onComplete.add(this.nextWaterPipe, this);
+    }
+
+    nextWaterPipe() {
+        switch(this.waterDirection) {
+            case 'right':
+                if (!this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].pipe || !_.includes(this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].pipe.connectors, 'left')) {
+                    return;
+                }
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1.alpha = 1;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1.height = 50;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1.anchor.set(0, 0.5);
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1.x = this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.x - this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.width/2;
+                const firstWaterTween = this.game.add.tween(this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1).to( { width: 100 }, 6000, 'Linear', true);
+                firstWaterTween.onComplete.add(function() {
+                    this.moveSecondWater(_.without(this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].pipe.connectors, 'left')[0]);
+                }, this)
+                break;
+        }
+    }
+
+    moveSecondWater(direction) {
+        switch(direction) {
+            case 'down':
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.alpha = 1;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.width = 50;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.height = 1;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.anchor.set(0.5, 0);
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.x = this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.x;
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.y = this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.y + 20;
+                const secondWaterTween = this.game.add.tween(this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2).to( { height: 50 }, 3000, 'Linear', true);
+        }
+        
+        // this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water2.x = this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.x - this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].tile.width/2;
+        // const firstWaterTween = this.game.add.tween(this.gameBoard[ this.curPipe.y ][ this.curPipe.x + 1].water1).to( { width: 100 }, 5000, 'Linear', true);
+    }
+
+    addPipeToStorage(index) {
+        const pipe =  _.sample(_.difference(this.pipes, this.pipeStorage));
+        const pipeImage = this.game.add.image(this.game.world.centerX - 4 * this.tileLength - 25, this.game.world.centerY + (index - 1) * this.tileLength, pipe.fullImg);
+        pipeImage.angle = pipe.rotation;
+        pipeImage.anchor.setTo(0.5);
+        pipeImage.width = this.tileLength;
+        pipeImage.height = this.tileLength;
+
+        //  Input Enable the sprites
+        pipeImage.inputEnabled = true;
+
+        //  Allow dragging - the 'true' parameter will make the sprite snap to the center
+        pipeImage.input.enableDrag(true);
+
+        pipeImage.events.onDragStart.add(this.onDragStart, this);
+        pipeImage.events.onDragStop.add(function(dragPipe) { this.onDragStop(pipe, dragPipe) }, this);
+
+        return pipe;
+    }
+
+    onDragStart() {
+        this.draggingPipe = true;
+    }
+
+    onDragStop(pipe, dragPipe) {
+        this.draggingPipe = false;
+        const tile = this.gameBoard[this.hoverTile.y][this.hoverTile.x].tile
+        this.gameBoard[this.hoverTile.y][this.hoverTile.x].pipe = pipe;
+
+        const underPipeImage = this.game.add.image(tile.x, tile.y, pipe.under_img);
+        underPipeImage.angle = pipe.rotation;
+        underPipeImage.anchor.setTo(0.5);
+        underPipeImage.width = this.tileLength;
+        underPipeImage.height = this.tileLength;
+
+        const startWaterBitmap = this.game.add.bitmapData(1, 1);
+        startWaterBitmap.fill(64, 164, 223, 1);
+        const water = this.game.add.sprite(this.game.world.centerX  - (2 - this.hoverTile.x)  * this.tileLength, this.game.world.centerY - (2 - this.hoverTile.y)  * this.tileLength, startWaterBitmap);
+        water.alpha = 0;
+        water.anchor.set(0);
+        this.gameBoard[this.hoverTile.y][this.hoverTile.x].water1 = water;
+
+        const water2 = this.game.add.sprite(this.game.world.centerX  - (2 - this.hoverTile.x)  * this.tileLength, this.game.world.centerY - (2 - this.hoverTile.y)  * this.tileLength, startWaterBitmap);
+        water2.alpha = 0;
+        water2.anchor.set(0);
+        this.gameBoard[this.hoverTile.y][this.hoverTile.x].water2 = water2;
+
+        const outerPipeImage = this.game.add.image(tile.x, tile.y, pipe.outer_img);
+        outerPipeImage.angle = pipe.rotation;
+        outerPipeImage.anchor.setTo(0.5);
+        outerPipeImage.width = this.tileLength;
+        outerPipeImage.height = this.tileLength;
+
+        const pipeIndex = _.findIndex(this.pipeStorage, pipe);
+        
+        const newPipe = this.addPipeToStorage(pipeIndex);
+        this.pipeStorage[pipeIndex] = newPipe;
+
+        dragPipe.destroy();
+        this.hoverTile = {};
+        
     }
 
     update() {
+        for (let y = 0; y < this.gameBoard.length; y++) {
+            for (let x = 0; x < this.gameBoard.length; x++) {
+                if (this.isPointerIsOverTile(this.gameBoard[y][x].tile)) {
+                    this.hoverTile = { x: x, y: y };
+
+                }
+            }
+        }
+    }
+
+    isPointerIsOverTile(tile: any) {
+        if (this.game.input.x > tile.x - tile.width / 2 && this.game.input.x < tile.x + tile.width / 2 && this.game.input.y > tile.y - tile.width / 2 && this.game.input.y < tile.y + tile.width / 2) return true;
     }
 
     changeGradeLevel(equations) {
