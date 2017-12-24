@@ -188,7 +188,7 @@ export class PipesComponent implements AfterViewInit {
                 }
                 this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1.alpha = 1;
                 this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1.width = 55;
-                this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1.anchor.set(1, 0);
+                this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1.anchor.set(1, 0.5);
                 this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1.x = this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].tile.x - this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].tile.width/2;
                 firstWaterTween = this.game.add.tween(this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1).to( { width: 100 }, 6000, 'Linear', true);
                 
