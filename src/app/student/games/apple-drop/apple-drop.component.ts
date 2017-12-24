@@ -683,7 +683,7 @@ export class AppleDropComponent implements AfterViewInit {
    * when the worm is done with its flip, the worm moves down
    */
   wormFlipDone() {
-    let downTween = this.game.add.tween(this.worm).to({y: this.game.height + 100}, 2750, PhaserGame.Easing.Linear, true);
+    let downTween = this.game.add.tween(this.worm).to({y: this.game.height + 100}, 2750, 'Linear', true);
 
     // destroy the worm when it is done moving down
     downTween.onComplete.add(() => { 
