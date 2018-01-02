@@ -393,7 +393,7 @@ export class AppleDropComponent implements AfterViewInit {
   }
 
   /**
-   * update the scpre text
+   * update the score text
    */
   updateScoreText() {
     this.scoreText.text = 'SCORE: ' + this.score;
