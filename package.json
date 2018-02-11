@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "api_start": "nodemon api/server.js"
+    "api_start": "nodemon api/server.js",
+    "postinstall": "npm run build --aot --prod"
   },
   "private": true,
   "dependencies": {
