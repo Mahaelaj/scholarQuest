@@ -5,13 +5,12 @@
   "scripts": {
     "ng": "ng",
     "dev_start": "ng serve --proxy-config proxy.config.json",
-    "start": "node api/server.js",
+    "start": "node api/server.js && ng build --aot --prod",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "api_start": "nodemon api/server.js",
-    "postinstall": "ng build --aot --prod"
+    "api_start": "nodemon api/server.js"
   },
   "private": true,
   "dependencies": {
