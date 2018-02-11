@@ -101,6 +101,7 @@ export class AppleDropComponent implements AfterViewInit, OnDestroy {
     // get the vocabulary to be used, and the skin color of the arms
     this.gameController.getVocabulary().subscribe(
       vocab => {
+        if (vocab.error) console.log(vocab);
         if (vocab.error) return this.gameController.openErrorMessage();
         this.apiService.post('getAvatarSkinColor', {}).subscribe(
           skinColor => {

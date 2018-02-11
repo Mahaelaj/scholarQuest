@@ -95,6 +95,7 @@ export class PipesComponent implements AfterViewInit, OnDestroy {
 
         this.gameController.getMath().subscribe(
             data => {
+                if (data.error) console.log(data);
                 if (data.error) return this.gameController.openErrorMessage();
                 this.totProblems = data.math;
                 this.loadAssets();

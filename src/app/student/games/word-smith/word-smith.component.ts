@@ -68,6 +68,7 @@ export class WordSmithComponent implements AfterViewInit, OnDestroy {
 
         this.gameController.getVocabulary().subscribe(
             data => {
+                if (data.error) console.log(data);
                 if (data.error) return this.gameController.openErrorMessage();
                 this.totVocab = data.vocab;
                 this.loadAssets();

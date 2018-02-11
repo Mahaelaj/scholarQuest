@@ -76,7 +76,7 @@ export class MathBingoComponent implements AfterViewInit, OnDestroy {
         // get the math problems
         this.gameController.getMath().subscribe(
             data => {
-                console.log(data);
+                if (data.error) console.log(data);
                 if (data.error) return this.gameController.openErrorMessage();
                 this.totEquations = data.math;
                 this.loadAssets();
