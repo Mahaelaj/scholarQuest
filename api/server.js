@@ -35,9 +35,23 @@ api.use(db.connect);
 
 api.use(views(path.join(__dirname, '../views'), { extension: 'html' }));
 api.use(async function(ctx, next) {
-    console.log(ctx.request.url);
-    if (ctx.request.url.includes('/api/')) await next();
-    else await ctx.render('index');
+    if (ctx.path.substr(0, 5).toLowerCase() === '/api/') {
+        await next();
+        return;
+      } else if (await send(ctx, ctx.path, sendOpts)) {
+        // file exists and request successfully served so do nothing
+        return;
+      } else if (ctx.path.indexOf('.') !== -1) {
+        // file does not exist so do nothing and koa will return 404 by default
+        // we treat any path with a dot '.' in it as a request for a file
+        return;
+      } else {
+        // request is for a subdirectory so treat it as an angular route and serve index.html, letting angular handle the routing properly
+        await ctx.render('index');
+      }
+    // console.log(ctx.request.url);
+    // if (ctx.request.url.includes('/api/')) await next();
+    // else await 
   });
 
 /**
