@@ -35,6 +35,7 @@ api.use(db.connect);
 
 api.use(views(path.join(__dirname, '../views'), { extension: 'html' }));
 api.use(async function(ctx, next) {
+    console.log(ctx.request.url);
     if (ctx.request.url.includes('/api/')) await next();
     else await ctx.render('index');
   });
@@ -90,7 +91,6 @@ api.use(userRoutes.authenticate);
     // now register the routes
     api.use(router.routes());
 
-    api.use(ctx => (console.log(ctx.request.url)));
     // handle unknown requests
     api.use(ctx => ctx.throw(`Unknown Request: ${ctx.request.url}`));
 
