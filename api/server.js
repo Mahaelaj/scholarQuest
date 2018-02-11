@@ -35,6 +35,7 @@ api.use(db.connect);
 
 api.use(views(path.join(__dirname, '../views'), { extension: 'html' }));
 api.use(async function(ctx, next) {
+    console.log(ctx.path);
     if (ctx.path.substr(0, 5).toLowerCase() === '/api/') {
         await next();
         return;
