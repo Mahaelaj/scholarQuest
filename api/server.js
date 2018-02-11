@@ -47,7 +47,7 @@ api.use(async function(ctx, next) {
         return;
       } else {
         // request is for a subdirectory so treat it as an angular route and serve index.html, letting angular handle the routing properly
-        await ctx.render('index');
+        await send(ctx, './index.html');
       }
   });
 
