@@ -16,7 +16,7 @@ export class ApiService {
     patch(path: string, params: any) {
         var token = this.cookieService.getCookie('token');
         if(token) params['token'] = token;
-        return this.http.patch('http://localhost:3000/api/' + path, params)
+        return this.http.patch('https://scholarquest.herokuapp.com/api/' + path, params)
           .map((response: Response) => response.json())
           .catch((error: Response) => Observable.throw(error.json()));
     }
@@ -33,7 +33,7 @@ export class ApiService {
 
 		// always do post calls - no need to differentiate between get/post/put/patch, etc.
 		// the caller model should subscribe to this observable and handle errors
-        let resp: Observable<Response> = this.http.post('api/' + path, JSON.stringify(params), options);
+        let resp: Observable<Response> = this.http.post('https://scholarquest.herokuapp.com/api/' + path, JSON.stringify(params), options);
           return resp.map((response: Response) => response.json())
           .catch((error: Response) => Observable.throw(error));
     }
