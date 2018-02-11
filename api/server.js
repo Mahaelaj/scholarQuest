@@ -38,7 +38,7 @@ api.use(async function(ctx, next) {
     if (ctx.path.substr(0, 5).toLowerCase() === '/api/') {
         await next();
         return;
-      } else if (await send(ctx, ctx.path, sendOpts)) {
+      } else if (await send(ctx, ctx.path)) {
         // file exists and request successfully served so do nothing
         return;
       } else if (ctx.path.indexOf('.') !== -1) {
