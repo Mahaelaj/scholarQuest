@@ -77,7 +77,8 @@ export class PipesComponent implements AfterViewInit, OnDestroy {
     }
 
     preload() {
-        this.game.load.spritesheet('loading_spritesheet', '../../../assets/games/loading_spritesheet.png', 1355, 761, 8);
+        this.game.load.spritesheet('loading_spritesheet', '../../../assets/games/loading/loading_spritesheet.png', 1355, 761, 8);
+        this.game.load.spritesheet('loading_start', '../../../assets/games/loading/start.png', 1355, 761, 8);
     }
 
     create() {
@@ -158,8 +159,17 @@ export class PipesComponent implements AfterViewInit, OnDestroy {
         this.game.load.start();
     };
 
+    /**
+     * add the start button
+     */
     onAssetsLoaded() {
+        const button = this.game.add.button(this.game.world.centerX, this.game.world.centerY, 'loading_start', this.initGame, this);
+        button.anchor.setTo(.5, .5);
+        button.alpha = 0;
+        this.game.add.tween(button).to( { alpha: 1 }, 2000, 'Linear', true);
+    }
 
+    initGame() {
         this.audio = {
             background: this.game.add.audio('background_music'),
             short_beep: this.game.add.audio('short_beep'),

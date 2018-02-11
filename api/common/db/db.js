@@ -32,8 +32,6 @@ async function mysqlConnection(ctx, next) {
  * disabled for online - used only for batch execution of db patches
  */
 async function getDbConnection(env, multipleStatements) {
-    console.log(1);
-
     // initialize the connection pool if it was not initialized already
     if (!global.connectionPool) {
         global.connectionPool = mysql.createPool({
@@ -44,17 +42,14 @@ async function getDbConnection(env, multipleStatements) {
             database : 'heroku_ef33faaed6da36b'
         });
     }
-    console.log(2);
-
     // get standard database connection from the pool
     var db = await global.connectionPool.getConnection();
-    console.log(3);
+
     // enable named parameters in queries
     db.connection.config.namedPlaceholders = true;
 
     // cache the native mysql2 node execute function
     db._execute = db.execute;
-console.log(4);
     // wrap the native execute method so we can convert properties of params from undefined to null because undefined crashes mysql2 and causes multiple restarts
     db.execute = function (sql, params) {
 
@@ -86,7 +81,7 @@ console.log(4);
             }
         }
         let q = db._query(sql, params);
-        console.log(q);
+
         return q;
     };
 

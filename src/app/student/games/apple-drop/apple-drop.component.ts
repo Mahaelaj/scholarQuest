@@ -81,9 +81,8 @@ export class AppleDropComponent implements AfterViewInit, OnDestroy {
    * load the background image
    */
   preload() {
-    this.game.load.reset();
-    this.game.load.removeAll();
-    this.game.load.spritesheet('loading_spritesheet', '../../../assets/games/loading_spritesheet.png', 1355, 761, 8);
+    this.game.load.spritesheet('loading_spritesheet', '../../../assets/games/loading/loading_spritesheet.png', 1355, 761, 8);
+    this.game.load.spritesheet('loading_start', '../../../assets/games/loading/start.png', 1355, 761, 8);
   }
 
   /**
@@ -122,10 +121,17 @@ export class AppleDropComponent implements AfterViewInit, OnDestroy {
     )
   }
 
-  /**
-   * once the assets load, display things
-   */
-  onAssetsLoaded() {
+    /**
+     * add the start button
+     */
+    onAssetsLoaded() {
+      const button = this.game.add.button(this.game.world.centerX, this.game.world.centerY, 'loading_start', this.initGame, this);
+      button.anchor.setTo(.5, .5);
+      button.alpha = 0;
+      this.game.add.tween(button).to( { alpha: 1 }, 2000, 'Linear', true);
+  }
+
+  initGame() {
     this.audio = {
       background: this.game.add.audio('background_music'),
       no_apple: this.game.add.audio('no_apple'),
@@ -145,6 +151,7 @@ export class AppleDropComponent implements AfterViewInit, OnDestroy {
     this.startBackgroundMusic();
     this.gameReady = true;
   }
+
 
   /**
    * load assets
