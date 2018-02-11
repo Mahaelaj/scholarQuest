@@ -13,18 +13,18 @@ import { GameComponent } from '../game/game/game.component';
 })
 export class VocabMatchComponent implements AfterViewInit {
 
-  private vocab = [];
-  private vocabFullList = [];
-  private vocabWords = [];
-  private vocabDefs = [];
-  private vocabNum = 10;
-  private selectedWord: string;
-  private score = 0;
-
+  public vocab = [];
+  public vocabFullList = [];
+  public vocabWords = [];
+  public vocabDefs = [];
+  public vocabNum = 10;
+  public selectedWord: string;
+  public score = 0;
+ 
   @ViewChild('score') scoreTxt: ElementRef;
   @ViewChild('game') gameController: GameComponent;
 
-  constructor(private renderer: Renderer, private apiService: ApiService) {}
+  constructor(public renderer: Renderer, public apiService: ApiService) {}
 
   ngAfterViewInit(){
     this.gameController.getVocabulary().subscribe(vocab => {
@@ -32,6 +32,7 @@ export class VocabMatchComponent implements AfterViewInit {
       this.initGameBoard();
     })
   }
+  
   
   initGameBoard(){
 
@@ -117,3 +118,5 @@ dragover(event){
   this.reload();
   }
 }
+
+

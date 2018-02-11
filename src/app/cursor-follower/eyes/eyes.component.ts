@@ -15,18 +15,18 @@ import { Component, ElementRef, ViewChild, Renderer, AfterViewInit, Input, trigg
       ]
 })
 export class EyesComponent implements AfterViewInit{
-    private moveState = "state1";
-    private eyesCenterX = 0;
-    private eyesCenterY = 0;
+    public moveState = "state1";
+    public eyesCenterX = 0;
+    public eyesCenterY = 0;
     @ViewChild('lOEye') leftEye : ElementRef;
     @ViewChild('lIEye') leftEyeball: ElementRef;
     @ViewChild('rOEye') rightEye: ElementRef;
     @ViewChild('rIEye') rightEyeball: ElementRef;
-    private xDormant = true;
-    private lerpSpeed = 0.05;
-    private eyeSize = 30;
-    private eyeballSize = 8;
-    private eyeballCen = 0;
+    public xDormant = true;
+    public lerpSpeed = 0.05;
+    public eyeSize = 30;
+    public eyeballSize = 8;
+    public eyeballCen = 0;
     @Input() xPos = 900;
     @Input() yPos = 200;
 
@@ -67,7 +67,7 @@ export class EyesComponent implements AfterViewInit{
     }
 
 
-    constructor(private renderer: Renderer) { }
+    constructor(public renderer: Renderer) { }
 
     moveEyes() {
       

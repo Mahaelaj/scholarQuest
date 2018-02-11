@@ -8,7 +8,7 @@ import { CoinsService } from './coins.service';
 @Injectable()
 export class ApiService {
 
-    constructor( private http: Http, private cookieService: CookiesService, private coinsService: CoinsService ) {}
+    constructor( public http: Http, public cookieService: CookiesService, public coinsService: CoinsService ) {}
 
     /*
      * patch request

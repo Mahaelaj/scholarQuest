@@ -10,11 +10,12 @@ const routes: Routes = [
 	{ path: '', component: GamesListComponent },
 	{ path: 'games', component: GamesListComponent },
 	{ path: 'math-bingo', loadChildren: './math-bingo/math-bingo.module#MathBingoModule' },
-	{ path: 'vocab-match', loadChildren: './vocab-match/vocab-match.module' },
-	{ path: 'typing', loadChildren: './typing/typing.module' },
-	{ path: 'math-clouds', loadChildren: './math-clouds/math-clouds.module' },
-	{ path: 'pipes', loadChildren: './pipes/pipes.module' },	
-	{ path: 'apple-drop', loadChildren: './apple-drop/apple-drop.module' },	
+	{ path: 'vocab-match', loadChildren: './vocab-match/vocab-match.module#VocabMatchModule' },
+	{ path: 'typing', loadChildren: './typing/typing.module#TypingModule' },
+	{ path: 'math-clouds', loadChildren: './math-clouds/math-clouds.module#MathCloudsModule' },
+	{ path: 'pipes', loadChildren: './pipes/pipes.module#PipesModule' },	
+	{ path: 'apple-drop', loadChildren: './apple-drop/apple-drop.module#AppleDropModule' },
+	{ path: 'word-smith', loadChildren: './word-smith/word-smith.module#WordSmithModule' },
 ];
 
 @NgModule({

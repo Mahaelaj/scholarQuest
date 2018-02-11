@@ -22,4 +22,4 @@ const routes: Routes = [
 		VocabMatchComponent,
 	]
 })
-export default class MathBingoModule {}
+export class VocabMatchModule {}

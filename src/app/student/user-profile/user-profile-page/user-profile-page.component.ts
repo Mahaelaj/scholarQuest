@@ -20,7 +20,7 @@ export class UserProfilePageComponent {
             }
         )
     }   
-    constructor(private cursorService: CursorService, private cursorFollowerService: CursorFollowerService, private apiService: ApiService, private renderer: Renderer) {}
+    constructor(public cursorService: CursorService, public cursorFollowerService: CursorFollowerService, public apiService: ApiService, public renderer: Renderer) {}
 
     changeCursor(event) {
         this.apiService.post('updateCursor', {'cursorId': event.normIndex}).subscribe()

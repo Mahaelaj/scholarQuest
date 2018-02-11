@@ -11,7 +11,7 @@ export class UserService {
 
     grade = 0;
 
-    constructor(public cookiesService: CookiesService, private cursorFollowerService: CursorFollowerService, private cursorService: CursorService ) {}
+    constructor(public cookiesService: CookiesService, public cursorFollowerService: CursorFollowerService, public cursorService: CursorService ) {}
 
     logIn(user) {
         this.cookiesService.addCookie('sessionToken', user.sessionToken);

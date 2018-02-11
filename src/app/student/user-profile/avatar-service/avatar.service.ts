@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class AvatarService {
 
-    private faces = [
+    public faces = [
         { img: '../../../assets/avatars/face/face1.png', index: 1 },
         { img: '../../../assets/avatars/face/face2.png', index: 2 },
         { img: '../../../assets/avatars/face/face3.png', index: 3 },
@@ -14,7 +14,7 @@ export class AvatarService {
         { img: '../../../assets/avatars/face/face6.png', index: 6 }
     ];
 
-    private eyes = [
+    public eyes = [
         { img: '../../../assets/avatars/eyes/eyes1/eyes1-amber.png', index: 1, color: 1, storeImg: '../../../assets/avatars/eyes/store/eyes1_amber_store.png' },
         { img: '../../../assets/avatars/eyes/eyes1/eyes1-blue.png', index: 1, color: 2, storeImg: '../../../assets/avatars/eyes/store/eyes1_blue_store.png' },
         { img: '../../../assets/avatars/eyes/eyes1/eyes1-brown.png', index: 1, color: 3, storeImg: '../../../assets/avatars/eyes/store/eyes1_brown_store.png' },
@@ -48,7 +48,7 @@ export class AvatarService {
         { img: '../../../assets/avatars/eyes/eyes6/eyes6.png', index: 6, storeImg: '../../../assets/avatars/eyes/store/eyes6_store.png' }
     ]
 
-    private eyeColors = [
+    public eyeColors = [
         { img: '../../../assets/avatars/eyes-color/eyes-amber.png', index: 1 },
         { img: '../../../assets/avatars/eyes-color/eyes-blue.png', index: 2 },
         { img: '../../../assets/avatars/eyes-color/eyes-brown.png', index: 3 },
@@ -57,7 +57,7 @@ export class AvatarService {
         { img: '../../../assets/avatars/eyes-color/eyes-hazel.png', index: 6 }
     ]
 
-    private noses = [
+    public noses = [
         { img: '../../../assets/avatars/nose/nose1.png', index: 1, storeImg: '../../../assets/avatars/nose/store/nose1_store.png' },
         { img: '../../../assets/avatars/nose/nose2.png', index: 2, storeImg: '../../../assets/avatars/nose/store/nose2_store.png' },
         { img: '../../../assets/avatars/nose/nose3.png', index: 3, storeImg: '../../../assets/avatars/nose/store/nose3_store.png' },
@@ -66,13 +66,13 @@ export class AvatarService {
         { img: '../../../assets/avatars/nose/nose6.png', index: 6, storeImg: '../../../assets/avatars/nose/store/nose6_store.png' }
     ];
 
-    private mouths = [ 
+    public mouths = [ 
         { img: '../../../assets/avatars/mouth/mouth1.png', index: 1, storeImg: '../../../assets/avatars/mouth/store/mouth1_store.png' },
         { img: '../../../assets/avatars/mouth/mouth2.png', index: 2, storeImg: '../../../assets/avatars/mouth/store/mouth2_store.png' },
         { img: '../../../assets/avatars/mouth/mouth3.png', index: 3, storeImg: '../../../assets/avatars/mouth/store/mouth3_store.png' },
     ];
 
-    private hair = [
+    public hair = [
         { img: '../../../assets/avatars/hair/hair1_cl1.png', index: 1, color: 1, storeImg: '../../../assets/avatars/hair/store/hair1_cl1_store.png' },
         { img: '../../../assets/avatars/hair/hair1_cl2.png', index: 1, color: 2, storeImg: '../../../assets/avatars/hair/store/hair1_cl2_store.png' },
         { img: '../../../assets/avatars/hair/hair1_cl3.png', index: 1, color: 3, storeImg: '../../../assets/avatars/hair/store/hair1_cl3_store.png' },
@@ -93,7 +93,7 @@ export class AvatarService {
         { img: '../../../assets/avatars/hair/hair3_cl6.png', index: 3, color: 6, storeImg: '../../../assets/avatars/hair/store/hair3_cl6_store.png' }
     ];
 
-    private hairColors = [
+    public hairColors = [
         { img: '../../../assets/avatars/hair/hair-cl/hair_cl1.jpg', index: 1 },
         { img: '../../../assets/avatars/hair/hair-cl/hair_cl2.jpg', index: 2 },
         { img: '../../../assets/avatars/hair/hair-cl/hair_cl3.jpg', index: 3 },
@@ -102,7 +102,7 @@ export class AvatarService {
         { img: '../../../assets/avatars/hair/hair-cl/hair_cl6.jpg', index: 6 }
     ]
 
-    private necks = [
+    public necks = [
         { img: '../../../assets/avatars/neck/neck-cl1.png', index: 1 },
         { img: '../../../assets/avatars/neck/neck-cl2.png', index: 2 },
         { img: '../../../assets/avatars/neck/neck-cl3.png', index: 3 },
@@ -111,13 +111,13 @@ export class AvatarService {
         { img: '../../../assets/avatars/neck/neck-cl6.png', index: 6 }
     ];
 
-    private shirts = [
+    public shirts = [
         { img: '../../../assets/avatars/shirts/shirt_yellow.png', index: 1, storeImg: '../../../assets/avatars/shirts/store/shirt_yellow_store.png' },
         { img: '../../../assets/avatars/shirts/shirt_red.png', index: 2, storeImg: '../../../assets/avatars/shirts/store/shirt_red_store.png' },
         { img: '../../../assets/avatars/shirts/shirt_blue.png', index: 3, storeImg: '../../../assets/avatars/shirts/store/shirt_blue_store.png' }
     ];
 
-    private arms = [
+    public arms = [
         { img: '../../../assets/avatars/arms/arms_cl1.png', index: 1 },
         { img: '../../../assets/avatars/arms/arms_cl2.png', index: 2 },
         { img: '../../../assets/avatars/arms/arms_cl3.png', index: 3 },
@@ -126,13 +126,13 @@ export class AvatarService {
         { img: '../../../assets/avatars/arms/arms_cl6.png', index: 6 }
     ];
 
-    private pants = [
+    public pants = [
         { img: '../../../assets/avatars/pants/pants_blue.png', index: 1 },
         { img: '../../../assets/avatars/pants/pants_dark_blue.png', index: 2 },
         { img: '../../../assets/avatars/pants/pants_brown.png', index: 3 }
     ];
     
-    private shoes = [
+    public shoes = [
         { img: '../../../assets/avatars/shoes/shoes_grey.png', index: 1, storeImg: '../../../assets/avatars/shoes/store/shoes_grey_store.png' },
         { img: '../../../assets/avatars/shoes/shoes_white.png', index: 2, storeImg: '../../../assets/avatars/shoes/store/shoes_white_store.png' },
         { img: '../../../assets/avatars/shoes/shoes_blue.png', index: 3, storeImg: '../../../assets/avatars/shoes/store/shoes_blue_store.png' }

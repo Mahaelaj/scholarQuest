@@ -12,14 +12,14 @@ import { ApiService } from '../../../shared/utils/api.service';
 })
 export class EditAvatarPageComponent {
 
-  private faceOptions: any;
-  private eyesOptions: any;
-  private hairOptions: any;
-  private hairColors: any;
-  private menuDisplayed = 'face';
+  public faceOptions: any;
+  public eyesOptions: any;
+  public hairOptions: any;
+  public hairColors: any;
+  public menuDisplayed = 'face';
 
   @ViewChild('avatar') avatar: AvatarComponent;
-  constructor(private avatarService: AvatarService, private apiService: ApiService) {}
+  constructor(public avatarService: AvatarService, public apiService: ApiService) {}
 
   avatarDataRetrieved(avatar) {
     this.hairOptions = this.avatarService.getHairByColor(avatar.hairColorId);

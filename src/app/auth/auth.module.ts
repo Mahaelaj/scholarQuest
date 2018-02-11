@@ -38,4 +38,4 @@ const routes: Routes = [
 		EmailVerifiedComponent
 	]
 })
-export default class AuthModule {}
+export class AuthModule {}

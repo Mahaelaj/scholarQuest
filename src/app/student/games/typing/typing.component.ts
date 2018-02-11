@@ -13,18 +13,18 @@ import { GameComponent } from '../game/game/game.component';
 })
 export class TypingComponent implements AfterViewInit{
   
-  private vocabularyFull = [];
-  private vocabulary = [];
-  private displayedWord: string;
-  private vocabularyQueue = [];
-  private score = 0;
-  private strikes = 0;
-  private scoreText ="Score : 0"
-  private strikeIcons = []
+  public vocabularyFull = [];
+  public vocabulary = [];
+  public displayedWord: string;
+  public vocabularyQueue = [];
+  public score = 0;
+  public strikes = 0;
+  public scoreText ="Score : 0"
+  public strikeIcons = []
 
   @ViewChild('game') gameController: GameComponent;
 
-  constructor(private renderer: Renderer) {}
+  constructor(public renderer: Renderer) {}
 
   ngAfterViewInit() {
     

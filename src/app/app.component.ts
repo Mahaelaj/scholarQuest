@@ -10,12 +10,12 @@ import { CoinsService } from './shared/utils/coins.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent  {
-    private xPos = 0;
-    private yPos = 0;
-    private cursorFollower = '0';
-    private test = false;
+    public xPos = 0;
+    public yPos = 0;
+    public cursorFollower = '0';
+    public test = false;
 
-    constructor(private cursorService: CursorService, private apiService: ApiService, private coinsService: CoinsService, private cursorFollowerService: CursorFollowerService, private renderer: Renderer) {
+    constructor(public cursorService: CursorService, public apiService: ApiService, public coinsService: CoinsService, public cursorFollowerService: CursorFollowerService, public renderer: Renderer) {
         
         this.cursorService.selectedCursor.subscribe(cursorIndex => {
             this.setCursor(cursorIndex);
@@ -24,7 +24,6 @@ export class AppComponent  {
         this.apiService.post('getStudent', {}).subscribe(
         student => {
             if (student.status != 'Success') return;
-            console.log(student);
             this.cursorFollowerService.selectedCursorFollower.next(student.cursorFollowerId);
             this.setCursor(student.cursorId);
             this.coinsService.coins.next(student.coins);

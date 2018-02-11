@@ -32,26 +32,29 @@ async function mysqlConnection(ctx, next) {
  * disabled for online - used only for batch execution of db patches
  */
 async function getDbConnection(env, multipleStatements) {
+    console.log(1);
 
     // initialize the connection pool if it was not initialized already
     if (!global.connectionPool) {
         global.connectionPool = mysql.createPool({
             connectionLimit: 100,
-            host: 'localhost',
-            user: 'scholarQuest',
-            password: 'scholarQuest',
-            database: 'scholarQuest',
+            host     : 'us-cdbr-iron-east-05.cleardb.net',
+            user     : 'b553ca7a78e543',
+            password : '1aaa6461',
+            database : 'heroku_ef33faaed6da36b'
         });
     }
+    console.log(2);
 
     // get standard database connection from the pool
     var db = await global.connectionPool.getConnection();
+    console.log(3);
     // enable named parameters in queries
     db.connection.config.namedPlaceholders = true;
 
     // cache the native mysql2 node execute function
     db._execute = db.execute;
-
+console.log(4);
     // wrap the native execute method so we can convert properties of params from undefined to null because undefined crashes mysql2 and causes multiple restarts
     db.execute = function (sql, params) {
 
@@ -68,7 +71,6 @@ async function getDbConnection(env, multipleStatements) {
 
         return db._execute(sql, params);
     };
-
     // cache the native mysql2 node query function
     db._query = db.query;
 
@@ -83,13 +85,14 @@ async function getDbConnection(env, multipleStatements) {
                 if (params[i] === undefined) params[i] = null;
             }
         }
-
-        return db._query(sql, params);
+        let q = db._query(sql, params);
+        console.log(q);
+        return q;
     };
 
     /*
-        * function to copy a table to a new table name. used for ETL and drops the table if it exists already. This also brings data
-        */
+    * function to copy a table to a new table name. used for ETL and drops the table if it exists already. This also brings data
+    */
     db.copy_table = async ({ table_to_copy, new_table_name }) => {
         await db.query(`DROP TABLE IF EXISTS ${new_table_name}`);
         await db.query(`CREATE TABLE ${new_table_name} LIKE ${table_to_copy}`);
@@ -100,7 +103,6 @@ async function getDbConnection(env, multipleStatements) {
         * function to return all rows from a select query
         */
     db.select_all = async function(sql, params) {
-
         // execute the query and get the results
         let result = await db.query(sql, params);
 

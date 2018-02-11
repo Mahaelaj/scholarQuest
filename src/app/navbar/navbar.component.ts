@@ -13,8 +13,8 @@ import { UserService } from '../shared/user/user.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements AfterViewInit{
-    private silverCoins = 0;
-    private goldCoins = 0;
+    public silverCoins = 0;
+    public goldCoins = 0;
     
     constructor(public router: Router, public userService: UserService, public coinsService: CoinsService, public cursorService: CursorService, public cursorFollowerService: CursorFollowerService) {}
 

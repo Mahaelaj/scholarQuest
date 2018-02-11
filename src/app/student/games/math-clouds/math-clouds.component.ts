@@ -13,24 +13,24 @@ import { ApiService } from '../../../shared/utils/api.service';
 export class MathCloudsComponent {
   
   state ='moving';
-  private mathProblemsFull = [];
-  private mathProblemsRemaining = [];
-  private displayedMathSolution: any;
-  private score = 0;
-  private strikes = 0;
-  private scoreText ="Score : 0"
-  private displayedProblems = [];
-  private boxMovingInterval: any;
-  private boxMoveRightDistance = -120;
-  private boxSpeed;
-  private strikeIcons = [];
-  private startSpeed = .1;
+  public mathProblemsFull = [];
+  public mathProblemsRemaining = [];
+  public displayedMathSolution: any;
+  public score = 0;
+  public strikes = 0;
+  public scoreText ="Score : 0"
+  public displayedProblems = [];
+  public boxMovingInterval: any;
+  public boxMoveRightDistance = -120;
+  public boxSpeed;
+  public strikeIcons = [];
+  public startSpeed = .1;
  
    @ViewChild('box') box: ElementRef;
  
   //  @ViewChild('endGameDialog') endGameDialog: EndGameDialogComponent;
 
-  constructor( private renderer: Renderer,  private arrayService: ArrayService, private apiService: ApiService ){
+  constructor( public renderer: Renderer,  public arrayService: ArrayService, public apiService: ApiService ){
     
     // this.mathProblemsFull = this.mathProblemsService.getFirstGradeMathEquations();
     // this.mathProblemsRemaining = this.mathProblemsService.getFirstGradeMathEquations(); 

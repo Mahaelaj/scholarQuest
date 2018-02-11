@@ -24,4 +24,4 @@ const routes: Routes = [
 		TypingComponent
 	]
 })
-export default class TypingModule {}
+export class TypingModule {}

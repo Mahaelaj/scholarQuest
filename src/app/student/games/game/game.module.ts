@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatDialogModule, MatIconModule, MatSidenavModule, MatCardModule, MatGridListModule, MatButtonModule } from '@angular/material';
+import { MatDialogModule, MatIconModule, MatSidenavModule, MatCardModule, MatGridListModule, MatButtonModule, MatSnackBarModule } from '@angular/material';
 import { GameComponent } from './game/game.component';
 import { GradeSidenavComponent } from './grade-sidenav/grade-sidenav.component';
 import { EndGameDialogComponent, WinDialogInnerTextComponent, LoseDialogInnerTextComponent } from './end-game-dialog/end-game-dialog.component';
@@ -15,6 +15,7 @@ import { CountdownOuterDialogComponent, CountdownInnerDialogComponent } from './
 		MatGridListModule,
 		MatIconModule,
 		MatButtonModule,
+		MatSnackBarModule,
 		CommonModule,
 		FlexLayoutModule
 	],

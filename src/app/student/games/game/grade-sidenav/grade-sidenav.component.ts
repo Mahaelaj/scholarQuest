@@ -14,7 +14,7 @@ export class GradeSidenavComponent {
   @Output() openedSidenav = new EventEmitter<boolean>();
   @Output() closedSidenav = new EventEmitter<boolean>();
 
-  private options = [
+  public options = [
     {img: '../../../../assets/clip-art/grades/first-grade.jpg', index: 1},
     {img: '../../../../assets/clip-art/grades/second-grade.jpg', index: 2},
     {img: '../../../../assets/clip-art/grades/third-grade.jpg', index: 3},

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Renderer, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, Renderer, AfterViewInit, OnDestroy } from '@angular/core';
 
 import * as _ from 'lodash';
 
@@ -12,54 +12,63 @@ import { ApiService } from '../../../shared/utils/api.service';
   templateUrl: './apple-drop.component.html',
   styleUrls: ['./apple-drop.component.css']
 })
-export class AppleDropComponent implements AfterViewInit {
+export class AppleDropComponent implements AfterViewInit, OnDestroy {
   
-  private bagVelocity = 0;
+  public bagVelocity = 0;
 
-  private vocabFull;
-  private vocabRemaining;
+  public vocabFull;
+  public vocabRemaining;
   public word: string[];
-  private letterIndex = 0;
+  public letterIndex = 0;
   
-  private game;
-  private startDialog: any = {};
-  private apples = [];
-  private bagFront;
-  private bagBack;
-  private arrowKeys;
-  private curLetter;
-  private livesGroup;
-  private appleCount;
-  private worm;
-  private score = 0;
-  private scoreText;
-  private isGameOver = false;
-  private gameOverDialog: any = {};
+  public game;
+  public startDialog: any = {};
+  public apples = [];
+  public bagFront;
+  public bagBack;
+  public arrowKeys;
+  public curLetter;
+  public livesGroup;
+  public appleCount;
+  public worm;
+  public score = 0;
+  public scoreText;
+  public isGameOver = false;
+  public gameOverDialog: any = {};
   
-  private boundaryCollisionGroup;
-  private appleCollisionGroup;
-  private bagCollisionGroup;
-  private bag = [];
-  private armColliderRight;
-  private armColliderLeft;
-  private livesCollisionGroup
-  private correctAppleInBag = false;
-  private incorrectAppleInBag = false;
-  private treeLetters;
-  private wormDown = false;
-  private gravity = 35;
-  private bagSensor;
-  private appleTweenTime = 3000;
-  private defaultGravity = 35;
-  private defaultAappleTweenTime = 3000;
-  private gameReady = false;
-  private coinsAnim;
-  private isStartDialogDisplayed;
-  private background;
+  public boundaryCollisionGroup;
+  public appleCollisionGroup;
+  public bagCollisionGroup;
+  public bag = [];
+  public armColliderRight;
+  public armColliderLeft;
+  public livesCollisionGroup
+  public correctAppleInBag = false;
+  public incorrectAppleInBag = false;
+  public treeLetters;
+  public wormDown = false;
+  public gravity = 100;
+  public bagSensor;
+  public appleTweenTime = 3000;
+  public defaultGravity = 100;
+  public defaultAappleTweenTime = 3000;
+  public gameReady = false;
+  public coinsAnim;
+  public isStartDialogDisplayed;
+  public background;
+  public audio;
+  public backgroundMusic;
 
   @ViewChild('game') gameController;
 
-  constructor (private apiService: ApiService) {}
+  constructor (public apiService: ApiService) {}
+
+  /**
+   * game cleanup
+   */
+  ngOnDestroy() {
+    this.game.destroy();
+  }
   
   /**
    * start the game
@@ -72,6 +81,8 @@ export class AppleDropComponent implements AfterViewInit {
    * load the background image
    */
   preload() {
+    this.game.load.reset();
+    this.game.load.removeAll();
     this.game.load.spritesheet('loading_spritesheet', '../../../assets/games/loading_spritesheet.png', 1355, 761, 8);
   }
 
@@ -91,11 +102,13 @@ export class AppleDropComponent implements AfterViewInit {
     // get the vocabulary to be used, and the skin color of the arms
     this.gameController.getVocabulary().subscribe(
       vocab => {
+        if (vocab.error) return this.gameController.openErrorMessage();
         this.apiService.post('getAvatarSkinColor', {}).subscribe(
           skinColor => {
             if (!skinColor.skin) this.loadAssets(3);
             else this.loadAssets(skinColor.skin);
-          }
+          },
+          error => { return this.gameController.openErrorMessage(); }
         )
     
         // get a copy of the vocabulary to be used
@@ -105,7 +118,7 @@ export class AppleDropComponent implements AfterViewInit {
         // set the arrow keys as inputs
         this.arrowKeys = this.game.input.keyboard.createCursorKeys();
       },
-      error => {}
+      error => { this.gameController.openErrorMessage(); }
     )
   }
 
@@ -113,6 +126,12 @@ export class AppleDropComponent implements AfterViewInit {
    * once the assets load, display things
    */
   onAssetsLoaded() {
+    this.audio = {
+      background: this.game.add.audio('background_music'),
+      no_apple: this.game.add.audio('no_apple'),
+      apple_catch: this.game.add.audio('apple_catch'),
+      wrong_apple: this.game.add.audio('wrong_apple'),
+    }
     this.background.destroy();
     this.setBackground();
     this.setPhysics();
@@ -123,6 +142,7 @@ export class AppleDropComponent implements AfterViewInit {
     this.getNewWord();
     this.displayStartDialog();
     this.displayScoreText();
+    this.startBackgroundMusic();
     this.gameReady = true;
   }
 
@@ -267,6 +287,12 @@ export class AppleDropComponent implements AfterViewInit {
     
     //retrieved from https://loonride.com/tools/physics
     await this.game.load.physics("physics", "https://loonride.com/data/p2/-KvuM0Urb6tBpa8xydUw");
+
+    await this.game.load.audio('apple_catch', '../../../assets/games/appleDrop/audio/apple_catch.ogg');
+    await this.game.load.audio('no_apple', '../../../assets/games/appleDrop/audio/no_apple.ogg');
+    await this.game.load.audio('wrong_apple', '../../../assets/games/appleDrop/audio/wrong_apple.ogg');
+    await this.game.load.audio('background_music', '../../../assets/games/appleDrop/audio/background.ogg');
+
     this.game.load.start();
   }
 
@@ -450,6 +476,7 @@ export class AppleDropComponent implements AfterViewInit {
 
     // if all of the apple hit the floor, lose a life
     if(!this.appleCount && !this.correctAppleInBag && !this.incorrectAppleInBag) {
+      this.audio.no_apple.play();
       this.loseLife();
     }
 
@@ -501,6 +528,13 @@ export class AppleDropComponent implements AfterViewInit {
     
   }
 
+  startBackgroundMusic() {
+    this.backgroundMusic = this.audio.background;
+    this.backgroundMusic.play();
+    this.backgroundMusic.volume = 0.5;
+    this.backgroundMusic.loopFull(0.5);
+}
+
   /**
    * if the play again button is pressed, reset the game
    */
@@ -548,9 +582,7 @@ export class AppleDropComponent implements AfterViewInit {
    * move the bag each update
    */
   update() {
-    if(!this.gameReady) return;
-    if( !this.isGameOver) {
-    
+    if(!this.gameReady || !this.isGameOver) return;
       for(let apple of this.apples) {
         if(apple.alive && apple.y > this.game.height + 150) {
           this.destroyApple(apple);
@@ -559,17 +591,16 @@ export class AppleDropComponent implements AfterViewInit {
 
       if (this.arrowKeys.left.isDown && this.bagFront.x >= 108)
       {
-          this.bagVelocity -= 2;
+          this.bagVelocity -= 6;
       }
       else if (this.arrowKeys.right.isDown && this.bagFront.x <= 1245)
       {
-        this.bagVelocity += 2;
+        this.bagVelocity += 6;
       }
       else {
-        if (this.bagVelocity < 0) this.bagVelocity += .75;
-        if (this.bagVelocity > 0) this.bagVelocity -= .75;
+        if (this.bagVelocity < 0) this.bagVelocity += 2.25;
+        if (this.bagVelocity > 0) this.bagVelocity -= 2.25;
       }
-    }
 
     this.bagFront.body.moveRight(this.bagVelocity);
     this.bagFront.body.angle = (this.game.width/2 -  this.bagFront.x)/100;
@@ -584,7 +615,7 @@ export class AppleDropComponent implements AfterViewInit {
     this.bagSensor.angle = (this.game.width/2 -  this.bagFront.x)/100;
     
     if (this.bagFront.x <= 108 && this.bagVelocity < 0) {
-      this.bagVelocity *= -.80;
+      this.bagVelocity *= -.8;
     }
 
     if (this.bagFront.x >= 1245 && this.bagVelocity > 0) {
@@ -639,6 +670,7 @@ export class AppleDropComponent implements AfterViewInit {
 
    // logic if the apple is the correct apple, or the incorrect apple
    if (obj2.sprite && obj2.sprite.letter == this.curLetter && !this.incorrectAppleInBag) {
+    this.audio.apple_catch.play();
     this.score += 5;
     this.updateScoreText();
     this.correctAppleInBag = true;
@@ -646,10 +678,11 @@ export class AppleDropComponent implements AfterViewInit {
     this.letterIndex++;
    }
    else if(obj2.sprite && !this.incorrectAppleInBag && !this.correctAppleInBag) {
+    this.audio.wrong_apple.play();
     this.loseLife();
     this.incorrectAppleInBag = true;
     this.startWormAnim();
-   }
+  }
    if(obj2.sprite) this.destroyApple(obj2.sprite);
   }
 
@@ -666,7 +699,7 @@ export class AppleDropComponent implements AfterViewInit {
     this.game.world.swap(this.worm, this.bagFront);
 
     // move the worm up
-    let upTween = this.game.add.tween(this.worm).to({y: this.worm.y - 175}, 500, PhaserGame.Easing.Linear, true);
+    let upTween = this.game.add.tween(this.worm).to({y: this.worm.y - 175}, 500, 'Linear', true);
 
     // when the worm is done moving up do a flip
     upTween.onComplete.add(() => {

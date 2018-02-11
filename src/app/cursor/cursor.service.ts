@@ -7,7 +7,7 @@ import * as _ from 'lodash'
 export class CursorService {
 
     public selectedCursor = new Subject<number>();
-    private cursors = [
+    public cursors = [
         { img: '../assets/clip-art/None.png', index: 1 },
         { img: '../assets/cursors/cursor_green.png', storeImg: '../assets/cursors/cursor_green_store.png', index: 2 },
         { img: '../assets/cursors/cursor_red.png', storeImg: '../assets/cursors/cursor_red_store.png', index: 3 },

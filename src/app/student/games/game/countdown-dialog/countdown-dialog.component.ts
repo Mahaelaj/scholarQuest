@@ -11,7 +11,7 @@ export class CountdownOuterDialogComponent {
   @Output() countdownDone = new EventEmitter<boolean>();
   config = new MatDialogConfig;
 
-  constructor(private dialog: MatDialog){
+  constructor(public dialog: MatDialog){
     this.config.disableClose = true;
  
   }
@@ -100,7 +100,7 @@ export class CountdownInnerDialogComponent implements AfterViewInit {
     activeNumberIndex = this.numbers.length -1;
     countdown;
 
-  constructor(public dialogRef: MatDialogRef<CountdownInnerDialogComponent>, private router: Router) {
+  constructor(public dialogRef: MatDialogRef<CountdownInnerDialogComponent>, public router: Router) {
     router.events.forEach((event) => {
      if(event instanceof NavigationStart) {
         clearInterval(this.countdown);

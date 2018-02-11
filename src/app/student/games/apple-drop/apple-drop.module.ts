@@ -27,4 +27,4 @@ const routes: Routes = [
 		AppleDropComponent
 	]
 })
-export default class AppleDropModule {}
+export class AppleDropModule {}

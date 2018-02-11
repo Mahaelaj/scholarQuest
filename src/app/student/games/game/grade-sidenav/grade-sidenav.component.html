@@ -3,7 +3,7 @@
      <mat-card-title>
        <h3>Grades</h3>
        </mat-card-title>
-      <mat-grid-list cols=1 rowHeight="130px" (change)="change()" >
+      <mat-grid-list cols=1 rowHeight="130px">
           <mat-grid-tile *ngFor="let option of options" (click)="clicked(option.index)">
             <img [src]=option.img/>
           </mat-grid-tile>

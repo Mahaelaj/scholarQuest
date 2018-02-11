@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.config.json",
+    "dev_start": "ng serve --proxy-config proxy.config.json",
+    "start": "node api/server.js && ng build --prod --aot",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -33,6 +34,7 @@
     "@types/paper": "^0.9.6",
     "@types/preloadjs": "^0.6.32",
     "@types/tweenjs": "^0.6.27",
+    "ang2-phaser": "^1.1.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "~1.15.2",
     "co-views": "^2.1.0",

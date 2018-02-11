@@ -14,7 +14,7 @@ export class EndGameDialogComponent {
   public isOpen = false;
   config = new MatDialogConfig;
 
-  constructor(private dialog: MatDialog){
+  constructor(public dialog: MatDialog){
     this.config.disableClose = true;
   }
 

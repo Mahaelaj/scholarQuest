@@ -33,4 +33,4 @@ const routes: Routes = [
 	],
     providers: [  AvatarService ]
 })
-export default class UserProfileModule {}
+export class UserProfileModule {}

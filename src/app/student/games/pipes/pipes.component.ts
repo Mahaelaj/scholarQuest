@@ -1,17 +1,17 @@
-import { Component, AfterViewInit,  ViewChild } from '@angular/core';
+import { Component, AfterViewInit,  ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash'
-import * as Phaser from 'phaser-ce';
+import 'phaser-ce/build/custom/pixi';
+import 'phaser-ce/build/custom/p2';
+import * as Phaser from 'phaser-ce/build/custom/phaser-split';
 
 import { GameComponent } from '../game/game/game.component';
-import { first } from 'rxjs/operator/first';
-import { concat } from 'rxjs/observable/concat';
-
+import { Router, Event, NavigationStart, NavigationEnd } from '@angular/router';
 
 @Component({
     templateUrl: './pipes.component.html',
     styleUrls: ['./pipes.component.css'],
 })
-export class PipesComponent implements AfterViewInit {
+export class PipesComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('game') gameController: GameComponent;
 
@@ -39,9 +39,13 @@ export class PipesComponent implements AfterViewInit {
     dragPipeOverRecycle;
     bubbles = [ 'bubbles1', 'bubbles2', 'bubbles3' ];
     waterBubbleCounter = 0;
+    rockGroup;
     bubbleGroup;
     waterGroup;
     underPipeGroup;
+    overPipeGroup;
+    fittingGroup;
+    pipeStorageGroup;
     bubbleTweens = [];
     fittings = [];
     startEndPipeImages = [];
@@ -55,6 +59,15 @@ export class PipesComponent implements AfterViewInit {
     levelText;
     storagePipeTweens = [];
     storagePipeBackgrounds = [];
+    audio;
+    backgroundMusic;
+
+    /**
+     * game cleanup
+     */
+    ngOnDestroy() {
+        this.game.destroy();
+    }
 
     /**
     * start the game
@@ -81,11 +94,12 @@ export class PipesComponent implements AfterViewInit {
 
         this.gameController.getMath().subscribe(
             data => {
-                this.totProblems= data.math;
+                if (data.error) return this.gameController.openErrorMessage();
+                this.totProblems = data.math;
                 this.loadAssets();
                 },
             error => {
-                console.log('error')
+                this.gameController.openErrorMessage();
             }
         )
     }
@@ -130,10 +144,34 @@ export class PipesComponent implements AfterViewInit {
         await this.game.load.image('dialog_background', '../../../assets/games/pipes/dialog_background.png');
         await this.game.load.image('background', '../../../assets/games/pipes/background.png');
         await this.game.load.image('storage_pipe_background', '../../../assets/games/pipes/storage_pipe_background.png');
+
+        await this.game.load.audio('background_music', '../../../assets/games/pipes/audio/background.ogg');
+        await this.game.load.audio('short_beep', '../../../assets/games/pipes/audio/short_beep.ogg');
+        await this.game.load.audio('long_beep', '../../../assets/games/pipes/audio/long_beep.ogg');
+        await this.game.load.audio('fast_forward', '../../../assets/games/pipes/audio/fast_forward.ogg');
+        await this.game.load.audio('recycle', '../../../assets/games/pipes/audio/recycle.ogg');
+        await this.game.load.audio('place_pipe', '../../../assets/games/pipes/audio/place_pipe.ogg');
+        await this.game.load.audio('cant_place_pipe', '../../../assets/games/pipes/audio/cant_place_pipe.ogg');
+        await this.game.load.audio('water_spill', '../../../assets/games/pipes/audio/water_spill.ogg');
+        await this.game.load.audio('water_in_end_pipe', '../../../assets/games/pipes/audio/water_in_end_pipe.ogg');
+
         this.game.load.start();
     };
 
     onAssetsLoaded() {
+
+        this.audio = {
+            background: this.game.add.audio('background_music'),
+            short_beep: this.game.add.audio('short_beep'),
+            long_beep: this.game.add.audio('long_beep'),
+            fast_forward: this.game.add.audio('fast_forward'),
+            recycle: this.game.add.audio('recycle'),
+            place_pipe: this.game.add.audio('place_pipe'),
+            cant_place_pipe: this.game.add.audio('cant_place_pipe'),
+            water_spill: this.game.add.audio('water_spill'),
+            water_in_end_pipe: this.game.add.audio('water_in_end_pipe')
+        }
+        
         this.terrainImages = [ 'terrain1', 'terrain2', 'terrain3', 'terrain4', 'terrain5' ];
         this.terrainTopImages = [ 'terrain_grass1', 'terrain_grass2', 'terrain_grass3' ];
 
@@ -220,7 +258,16 @@ export class PipesComponent implements AfterViewInit {
         storagePipeBackground3.scale.setTo(1.5);
         this.storagePipeBackgrounds = [ storagePipeBackground, storagePipeBackground2, storagePipeBackground3 ];
 
+        this.startBackgroundMusic();
+
         this.setUpGame();
+    }
+
+    startBackgroundMusic() {
+        this.backgroundMusic = this.audio.background;
+        this.backgroundMusic.play();
+        this.backgroundMusic.volume = 0.2;
+        this.backgroundMusic.loopFull(0.5);
     }
 
     /**
@@ -280,9 +327,13 @@ export class PipesComponent implements AfterViewInit {
         problemText.anchor.set(1, 0.5);
        
         // set up groups
+        this.rockGroup = this.game.add.group();
         this.underPipeGroup = this.game.add.group();
         this.waterGroup = this.game.add.group();
         this.bubbleGroup = this.game.add.group();
+        this.overPipeGroup = this.game.add.group();
+        this.fittingGroup = this.game.add.group();
+        this.pipeStorageGroup = this.game.add.group();
 
         // get a reference to all the images so they can be destroyed later
         this.startEndPipeImages.push(startPipeUnder, startPipeOuter, this.startWater, problemText);
@@ -294,7 +345,7 @@ export class PipesComponent implements AfterViewInit {
         // add three rocks to the gameboard, they can be placed anywhere except the first and last column
         const rockPlacement = _.sampleSize([ { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }, { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 3 }, { x: 2, y: 4 }, { x: 3, y: 0 }, { x: 3, y: 1 }, { x: 3, y: 2 }, { x: 3, y: 3 }, { x: 3, y: 4 }], 3);
         rockPlacement.forEach(rock => {
-            const rockImage = this.game.add.image(this.gameBoard[rock.y][rock.x].tile.x, this.gameBoard[rock.y][rock.x].tile.y, _.sample(['rock1', 'rock2', 'rock3']));
+            const rockImage = this.rockGroup.create(this.gameBoard[rock.y][rock.x].tile.x, this.gameBoard[rock.y][rock.x].tile.y, _.sample(['rock1', 'rock2', 'rock3']));
             rockImage.anchor.setTo(0.5);
             rockImage.scale.setTo(.15);
             this.rockImages.push(rockImage);
@@ -344,9 +395,10 @@ export class PipesComponent implements AfterViewInit {
      * make the water move faster when the fastforward button is pressed
      */
     fastForward() {
-        
+
         // only fastforward after the game has started
         if (!this.waterTween || !this.waterTween.isRunning) return;
+        this.audio.fast_forward.play();
 
         this.speed += 5;
         
@@ -444,6 +496,8 @@ export class PipesComponent implements AfterViewInit {
         }
         this.waterSpillImage.anchor.set(0.5);
         this.waterSpillImage.scale.setTo(0.3);
+        
+        this.audio.water_spill.play();
 
         // start the water spill tween
         const waterSpillTween = this.game.add.tween(this.waterSpillImage.scale).to({x: 1.0, y: 1.0}, 2000, 'Linear', true);
@@ -550,6 +604,7 @@ export class PipesComponent implements AfterViewInit {
                 firstWaterTween = this.game.add.tween(this.gameBoard[ this.curPipe.y ][ this.curPipe.x ].water1).to( { width: (this.curPipe.x == 5 ? 80 : 100) }, 6000, 'Linear', true);
                 
                 if (this.curPipe.x == 5) {
+                    this.audio.water_in_end_pipe.play();
                     firstWaterTween.onComplete.add(this.winGame, this);
                 }
 
@@ -619,7 +674,7 @@ export class PipesComponent implements AfterViewInit {
         let nextDirection;
         let bubbleTween;
 
-        if (!this.gameBoard[ bubble.y ][ bubble.x ].pipe) return;
+        if (!this.gameBoard[ bubble.y ][ bubble.x ] || !this.gameBoard[ bubble.y ][ bubble.x ].pipe) return;
         switch(bubble.direction) {
             case 'right':
                 bubbleTween = this.game.add.tween(bubble.bubbleImg).to( { x: bubble.bubbleImg.x + 72.5 }, 4500, 'Linear', true);
@@ -744,6 +799,13 @@ export class PipesComponent implements AfterViewInit {
      */
     countdown(number) {
 
+        // lower the background music at the start of the countdown
+        if (number == 3) {
+            this.game.add.tween(this.backgroundMusic).to( { volume: 0.2 }, 1000, 'Linear', true, 0);
+        }
+        if (number == 1) this.audio.long_beep.play();
+        else this.audio.short_beep.play();
+
         // add the countdown image
         const countdownImage = this.game.add.image(this.game.world.centerX, this.game.world.centerY, 'countdown' + number);
         countdownImage.anchor.setTo(.5);
@@ -759,9 +821,11 @@ export class PipesComponent implements AfterViewInit {
         // start game when the countdown is done
         countdownTweenFadeOut.onComplete.add(function() {
             if (number - 1  == 0) {
+                this.game.add.tween(this.backgroundMusic).to( { volume: 0.5 }, 2000, 'Linear', true, 0);
                 this.startGame();
                 return;
             }
+            
             // recursively call function until the countdown is over
             this.countdown(number - 1);
         }, this)
@@ -833,7 +897,7 @@ export class PipesComponent implements AfterViewInit {
         const pipe =  _.sample(_.difference(this.pipes, this.pipeStorage));
 
         //add the pipe image
-        const pipeImage = this.game.add.image(this.storagePipeBackgrounds[ index ].x + (this.storagePipeBackgrounds[ index ].width / 2), this.storagePipeBackgrounds[ index ].y + (this.storagePipeBackgrounds[ index ].height / 2), pipe.fullImg);
+        const pipeImage = this.pipeStorageGroup.create(this.storagePipeBackgrounds[ index ].x + (this.storagePipeBackgrounds[ index ].width / 2), this.storagePipeBackgrounds[ index ].y + (this.storagePipeBackgrounds[ index ].height / 2), pipe.fullImg);
         pipeImage.anchor.setTo(0.5);
         pipeImage.angle = pipe.rotation;
         pipeImage.width = this.tileLength;
@@ -859,6 +923,7 @@ export class PipesComponent implements AfterViewInit {
 
         // pipe is over recycle so recycle pipe
         if (this.game.input.x > this.recycleImage.x - this.recycleImage.width / 2 && this.game.input.x < this.recycleImage.x + this.recycleImage.width / 2 && this.game.input.y > this.recycleImage.y - this.recycleImage.width / 2 && this.game.input.y < this.recycleImage.y + this.recycleImage.width / 2){
+            this.audio.recycle.play();
             this.getNewPipeForStorage(pipe, dragPipe);
             return;
         }
@@ -868,10 +933,13 @@ export class PipesComponent implements AfterViewInit {
 
         // tile already has a pipe, a rock, or drag pipe is not over a tile, so put the pipe back into storage
         if (!hoverTile || this.gameBoard[hoverTile.y][hoverTile.x].pipe || this.gameBoard[hoverTile.y][hoverTile.x].rock) {
+            this.audio.cant_place_pipe.play();
             dragPipe.x = this.storagePipeBackgrounds[ dragPipe.index ].x + (this.storagePipeBackgrounds[ dragPipe.index ].width / 2);
             dragPipe.y = this.storagePipeBackgrounds[ dragPipe.index ].y + (this.storagePipeBackgrounds[ dragPipe.index ].height / 2)
             return;
-        } 
+        }
+
+        this.audio.place_pipe.play();
         
         const tile = this.gameBoard[hoverTile.y][hoverTile.x].tile
         this.gameBoard[hoverTile.y][hoverTile.x].pipe = pipe;
@@ -897,18 +965,18 @@ export class PipesComponent implements AfterViewInit {
         this.gameBoard[hoverTile.y][hoverTile.x].water2 = water2;
 
         // set the outerpipe for the tile
-        const outerPipeImage = this.game.add.image(tile.x, tile.y, pipe.outer_img);
+        const outerPipeImage = this.overPipeGroup.create(tile.x, tile.y, pipe.outer_img);
         outerPipeImage.angle = pipe.rotation;
         outerPipeImage.anchor.setTo(0.5);
         outerPipeImage.width = this.tileLength;
         outerPipeImage.height = this.tileLength;
         this.gameBoard[hoverTile.y][hoverTile.x].outerPipe = outerPipeImage;
-        
-        // get a new pipe for storage
-        this.getNewPipeForStorage(pipe, dragPipe);
-       
+         
         // add pipe fittings to the pipe
         this.addPipeFittings(pipe.connectors, hoverTile);
+
+        // get a new pipe for storage
+        this.getNewPipeForStorage(pipe, dragPipe);
     }
 
     /**
@@ -928,35 +996,35 @@ export class PipesComponent implements AfterViewInit {
     addPipeFittings(pipeConnectors, hoverTile) {
         const tileCord = { x: this.gameBoard[hoverTile.y][hoverTile.x].tile.x, y: this.gameBoard[hoverTile.y][hoverTile.x].tile.y };
         if (hoverTile.x == 0 && this.startRow == hoverTile.y && pipeConnectors.includes('left')) {
-            const fitting = this.game.add.image(tileCord.x - 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x - 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             this.fittings.push(fitting);
         }
 
         if (hoverTile.x > 0 && pipeConnectors.includes('left') && this.gameBoard[hoverTile.y][hoverTile.x -1 ].pipe && this.gameBoard[hoverTile.y][hoverTile.x -1 ].pipe.connectors.includes('right')) {
-            const fitting = this.game.add.image(tileCord.x - 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x - 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             this.fittings.push(fitting);
         }
 
         if (hoverTile.x < 4 && pipeConnectors.includes('right') && this.gameBoard[hoverTile.y][hoverTile.x + 1 ].pipe && this.gameBoard[hoverTile.y][hoverTile.x + 1 ].pipe.connectors.includes('left')) {
-            const fitting = this.game.add.image(tileCord.x + 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x + 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             this.fittings.push(fitting);
         }
 
         if (hoverTile.x == 4 && pipeConnectors.includes('right') && this.gameBoard[hoverTile.y][hoverTile.x + 1 ]) {
-            const fitting = this.game.add.image(tileCord.x + 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x + 1/2 * this.tileLength, tileCord.y, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             this.fittings.push(fitting);
         }
 
         if (hoverTile.y > 0 && pipeConnectors.includes('up') && this.gameBoard[hoverTile.y - 1][hoverTile.x].pipe && this.gameBoard[hoverTile.y - 1][hoverTile.x ].pipe.connectors.includes('down')) {
-            const fitting = this.game.add.image(tileCord.x, tileCord.y - 1/2 * this.tileLength, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x, tileCord.y - 1/2 * this.tileLength, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             fitting.angle = 90;
@@ -964,7 +1032,7 @@ export class PipesComponent implements AfterViewInit {
         }
 
         if (hoverTile.y < 4 && pipeConnectors.includes('down') && this.gameBoard[hoverTile.y + 1][hoverTile.x].pipe && this.gameBoard[hoverTile.y + 1][hoverTile.x ].pipe.connectors.includes('up')) {
-            const fitting = this.game.add.image(tileCord.x, tileCord.y + 1/2 * this.tileLength, 'pipe_fitting');
+            const fitting = this.fittingGroup.create(tileCord.x, tileCord.y + 1/2 * this.tileLength, 'pipe_fitting');
             fitting.anchor.setTo(.5);
             fitting.scale.setTo(0.15);
             fitting.angle = 90;

@@ -13,7 +13,7 @@
         <br>
     </div>
     <div class="options">
-    <mat-grid-list #normList [cols]=columns rowHeight="100px" (change)="change()" class="normList" class="options">
+    <mat-grid-list #normList [cols]=columns rowHeight="100px" class="normList" class="options">
             <mat-grid-tile *ngFor="let option of options"
                 [style.background-color]="(option.index == selectedNorm ? 'green' : '')"
                 (click)="clicked(option.index)"

@@ -26,4 +26,4 @@ const routes: Routes = [
 		PipesComponent
 	]
 })
-export default class PipesModule {}
+export class PipesModule {}

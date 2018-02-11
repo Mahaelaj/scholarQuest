@@ -30,10 +30,10 @@ export class ButtonGridCardComponent implements AfterViewInit {
     @ViewChild('miniList') miniList: any;
     @ViewChild('normList') normList: any;
 
-    private normTiles: any[];
-    private miniTiles: any[]
+    public normTiles: any[];
+    public miniTiles: any[]
 
-    constructor(private apiService: ApiService, private renderer: Renderer){}
+    constructor(public apiService: ApiService, public renderer: Renderer){}
 
     ngAfterViewInit(){
       this.normTiles = this.normList._element.nativeElement.children[0].children;

@@ -16,17 +16,17 @@ import { CursorFollowerService } from '../cursor-follower.service';
 })
 export class CursorFollowerListComponent implements AfterViewInit{
     @ViewChild('cursorFollower', { read: ViewContainerRef }) cursorFollower;
-    private componentRef;
-    private cursorFollowers;
-    private cursorFollowerIndex = 1;
+    public componentRef;
+    public cursorFollowers;
+    public cursorFollowerIndex = 1;
     @Input() xPos;
     @Input() yPos;
-    private cursorFollowerReady = false;
-    private studentServiceIndex;
+    public cursorFollowerReady = false;
+    public studentServiceIndex;
     displayedCursorFollower: any;
     show = 'invisible';
     
-    constructor(private viewContainerRef: ViewContainerRef, private componentFactoryResolver: ComponentFactoryResolver, private cursorFollowerService: CursorFollowerService, private elementRef: ElementRef) {}
+    constructor(public viewContainerRef: ViewContainerRef, public componentFactoryResolver: ComponentFactoryResolver, public cursorFollowerService: CursorFollowerService, public elementRef: ElementRef) {}
 
     ngAfterViewInit(){
         this.cursorFollowerService.selectedCursorFollower.subscribe((value) => {

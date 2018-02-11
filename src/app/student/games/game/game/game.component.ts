@@ -1,4 +1,5 @@
 import { Component, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 
 import { ApiService } from '../../../../shared/utils/api.service';
 import { UserService } from '../../../../shared/user/user.service';
@@ -23,7 +24,7 @@ export class GameComponent {
 
   gradeLevel = 1;
 
-  constructor(private apiService: ApiService, private userService: UserService, private coinsService: CoinsService) {
+  constructor(public apiService: ApiService, public userService: UserService, public coinsService: CoinsService, public snackBar: MatSnackBar) {
     this.gradeLevel = this.userService.grade ? this.userService.grade : 1;
   }
 
@@ -50,15 +51,22 @@ export class GameComponent {
   changeGradeLevel(event){ 
     this.gradeLevel = event;
      this.apiService.post(this.type == 'vocab' ? 'getVocabulary' : 'getMath', { grade: event }).subscribe(
-        data =>  this.changeGradeLevelEvent.emit(this.type == 'vocab' ? data.vocab : data.math),
-        error => { console.log(error) }
+        data => {
+          if (data.error) return this.openErrorMessage();
+          this.changeGradeLevelEvent.emit(this.type == 'vocab' ? data.vocab : data.math)
+        },
+        error => { this.openErrorMessage() }
       )
   }
 
   updateCoins(coins) {
-    if (!coins) return;
+    if (!coins || !this.userService.isLoggedIn()) return;
     this.apiService.post('updateCoins', { coins: coins }).subscribe(
-      data => this.coinsService.coins.next(data.coins)
+      data => { 
+        if (data.error) return this.openErrorMessage();
+        this.coinsService.coins.next(data.coins)
+      },
+      error => this.openErrorMessage()
     )
   }
 
@@ -76,5 +84,9 @@ export class GameComponent {
 
   getMath() {
     return this.apiService.post('getMath', { grade: this.gradeLevel });
+  }
+
+  openErrorMessage() {
+    this.snackBar.open('An Error Has occurred. Please try again later', 'close');
   }
 }

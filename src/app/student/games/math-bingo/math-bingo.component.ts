@@ -1,19 +1,17 @@
-import { Component, AfterViewInit, Renderer, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Renderer, ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash'
 
 import { ApiService } from '../../../shared/utils/api.service';
 import { GameComponent } from '../game/game/game.component';
 
-// necessary to get phaser to work
 import * as Phaser from 'phaser-ce';
-import { Math } from 'phaser-ce';
 
 @Component({
     selector: 'sq-math-bingo',
     templateUrl: './math-bingo.component.html',
     styleUrls: ['./math-bingo.component.css'],
 })
-export class MathBingoComponent implements AfterViewInit {
+export class MathBingoComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('game') gameController: GameComponent;
 
@@ -38,7 +36,17 @@ export class MathBingoComponent implements AfterViewInit {
     endGameDialog = { dialogBackground: null, dialogText: null, playAgainButton: null, buttonText: null };
     buttonTexts = [];
     canSelectTile = false;
-    constructor(private renderer: Renderer, private apiService: ApiService) {}
+    audio;
+    backgroundMusic;
+
+    constructor(public renderer: Renderer, public apiService: ApiService) {}
+
+    /**
+     * game cleanup
+     */
+    ngOnDestroy() {
+        this.game.destroy();
+    }
 
     /**
     * start the game
@@ -67,11 +75,13 @@ export class MathBingoComponent implements AfterViewInit {
         // get the math problems
         this.gameController.getMath().subscribe(
             data => {
+                console.log(data);
+                if (data.error) return this.gameController.openErrorMessage();
                 this.totEquations = data.math;
                 this.loadAssets();
                 },
             error => {
-                console.log('error')
+                this.gameController.openErrorMessage();
             }
         )
     }
@@ -102,10 +112,22 @@ export class MathBingoComponent implements AfterViewInit {
         await this.game.load.image('moonCard14', '../../../assets/games/mathBingo/moonCards/moonCard14.png');
         await this.game.load.image('moonCard15', '../../../assets/games/mathBingo/moonCards/moonCard15.png');
         await this.game.load.image('moonCard16', '../../../assets/games/mathBingo/moonCards/moonCard16.png');
+
+        await this.game.load.audio('card_reveal', '../../../assets/games/mathBingo/audio/card_reveal.ogg');
+        await this.game.load.audio('background_music', '../../../assets/games/mathBingo/audio/background.ogg');
+        await this.game.load.audio('select_correct', '../../../assets/games/mathBingo/audio/select_correct.ogg');
+        await this.game.load.audio('select_incorrect', '../../../assets/games/mathBingo/audio/select_incorrect.ogg');
         this.game.load.start();
     };
 
     onAssetsLoaded() {
+
+        this.audio = {
+            card_reveal: this.game.add.audio('card_reveal'),
+            background: this.game.add.audio('background_music'),
+            select_correct: this.game.add.audio('select_correct'),
+            select_incorrect: this.game.add.audio('select_incorrect')
+        }
         
         // get 24 solutions for the gameboard
         this.equations = _.sampleSize(this.totEquations, 24);
@@ -192,6 +214,9 @@ export class MathBingoComponent implements AfterViewInit {
 
         // set the current equation
         this.setCurrentEquation(6000);
+
+        // start the background music
+        this.game.time.events.add(7000, this.startBackgroundMusic, this);
     }
 
     /**
@@ -210,6 +235,11 @@ export class MathBingoComponent implements AfterViewInit {
      * fade the mooncards at the start of the game
      */
     fadeMooncards() {
+
+        // play the card reveal sound 
+        this.audio.card_reveal.play();
+
+        // fade out the mooncards
         for (let i = this.moonCards.length - 1; i >= 0; i--) {
             const delayTime = (this.moonCards.length - 1 - i) / 5 * 1000
             this.game.add.tween(this.moonCards[i]).to( { alpha: 0 }, 2000, 'Linear', true, delayTime);
@@ -292,6 +322,9 @@ export class MathBingoComponent implements AfterViewInit {
         });
     }
 
+    /**
+     * interpolate the color on an object
+     */
     tweenTint(obj, startColor, endColor, time = 250, delay = 0, callback = null) {
 
         // create a step object
@@ -326,9 +359,15 @@ export class MathBingoComponent implements AfterViewInit {
      */
     tileSelected(buttonText, buttonIndex) {
 
+        // only let tiles be selected if the timer is runnint
+        if (!this.timer || !this.timer.running) return;
+
         // if the tile selected is the correct solution
         if (buttonText.text == this.currEquation.solution) {
             
+            // play select correct audio
+            this.audio.select_correct.play();
+    
             // don't select tile if the countdown has started, or if it has already been selected
             if (!this.canSelectTile) return;
 
@@ -363,6 +402,9 @@ export class MathBingoComponent implements AfterViewInit {
 
         // if the tile selected is incorrect, remove three points
         this.updateScore(-3);
+
+        // play select incorrect audio
+        this.audio.select_incorrect.play();
     }
 
     /**
@@ -430,7 +472,6 @@ export class MathBingoComponent implements AfterViewInit {
      * set the game to won 
      */
     setWin(selectedSwirls) {
-
         this.game.tweens.removeAll();
         selectedSwirls.forEach( swirl => {
             swirl.tint = 0x2ecc71;
@@ -480,7 +521,10 @@ export class MathBingoComponent implements AfterViewInit {
      * reload the game
      */
     reload() {
-             
+
+        // remove the background music;
+        this.fadeOutBackroundMusic();
+
         // stop the solutions on the bingo card from twinkling
         this.twinkleTimer.destroy();
          
@@ -515,6 +559,14 @@ export class MathBingoComponent implements AfterViewInit {
     }
 
     /**
+     * fade out the background music
+     */
+    fadeOutBackroundMusic() {
+        if (!this.backgroundMusic || !this.backgroundMusic.isPlaying) return;
+        this.game.add.tween(this.backgroundMusic).to( { volume: 0 }, 2000, 'Linear', true, 0);
+    }
+
+    /**
      * set up the gameboard
      */
     setupBoard() {
@@ -534,6 +586,29 @@ export class MathBingoComponent implements AfterViewInit {
 
         // set the current problem
         this.setCurrentEquation(6000);
+
+        // start the background music
+        this.game.time.events.add(7000, this.fadeInBackgroundMusic, this);
+    }
+
+    /**
+     * start the background music
+     */
+    startBackgroundMusic() {
+        this.backgroundMusic = this.audio.background;
+        this.backgroundMusic.play();
+        this.backgroundMusic.volume = 0.5;
+        this.backgroundMusic.loopFull(0.5);
+    }
+
+    /**
+     * fade in the background music
+     */
+    fadeInBackgroundMusic() {
+        if (!this.backgroundMusic) return this.startBackgroundMusic();
+        this.backgroundMusic.restart();
+        this.backgroundMusic.loopFull(0.5);
+        this.backgroundMusic.volume = 0.5;
     }
 
     /**
@@ -587,6 +662,9 @@ export class MathBingoComponent implements AfterViewInit {
      * change the grade levels
      */
     changeGradeLevel(equations) {
+
+        if (this.audio.card_reveal.isPlaying) this.audio.card_reveal.stop();
+        this.game.time.events.removeAll();
         this.game.tweens.removeAll();
         this.totEquations = equations;
         this.reload();

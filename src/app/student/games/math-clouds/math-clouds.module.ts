@@ -24,4 +24,4 @@ const routes: Routes = [
 		MathCloudsComponent
 	]
 })
-export default class MathCloudsModule {}
+export class MathCloudsModule {}

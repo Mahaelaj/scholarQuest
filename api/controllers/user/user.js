@@ -61,7 +61,7 @@ class User extends Controller {
 				from: 'schquest@gmail.com',
 				to: this.params.email,
 				subject: 'Welcome to ScholarQuest',
-				text: 'Thank you for creating a ScholarQuest account! Follow this link to verify your account: http://localhost:3000/auth/verified/' + this.getCryptr().encrypt(this.params.email)
+				text: 'Thank you for creating a ScholarQuest account! Follow this link to verify your account: https://scholarquest.herokuapp.com/auth/verified/' + this.getCryptr().encrypt(this.params.email)
 			};
 
 			transporter.sendMail(HelperOptions, (error, info) => {
