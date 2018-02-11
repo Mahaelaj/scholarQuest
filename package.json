@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "dev_start": "ng serve --proxy-config proxy.config.json",
-    "start": "node api/server.js && ng build --prod --aot",
+    "start": "node api/server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
