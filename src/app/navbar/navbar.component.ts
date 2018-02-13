@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router} from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 
 import { CursorService } from '../cursor/cursor.service';
@@ -16,7 +16,8 @@ export class NavbarComponent implements AfterViewInit{
     public silverCoins = 0;
     public goldCoins = 0;
     
-    constructor(public router: Router, public userService: UserService, public coinsService: CoinsService, public cursorService: CursorService, public cursorFollowerService: CursorFollowerService) {}
+    constructor(public router: Router, public userService: UserService, public coinsService: CoinsService, public cursorService: CursorService, public cursorFollowerService: CursorFollowerService) {
+    }
 
     ngAfterViewInit(){
         this.coinsService.coins.subscribe(coins => {
@@ -28,5 +29,9 @@ export class NavbarComponent implements AfterViewInit{
     logout() {
         this.userService.logout();
         this.router.navigateByUrl('/home');
+    }
+
+    isActiveRoute(url) {
+        return this.router.url.startsWith('/' + url);
     }
 }

@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { RouterModule }   from '@angular/router';
-import { MatToolbarModule, MatButtonModule } from '@angular/material';
+import { MatToolbarModule, MatButtonModule, MatTabsModule } from '@angular/material';
 import { ToastyModule } from 'ng2-toasty'
 import 'hammerjs';
 
@@ -41,6 +41,7 @@ import { CursorService } from './cursor/cursor.service';
         FlexLayoutModule,
         MatToolbarModule,
         MatButtonModule,
+        MatTabsModule,
         ToastyModule.forRoot(),
         RouterModule.forRoot([ 
             { path: '', redirectTo: '/home', pathMatch: 'full' },

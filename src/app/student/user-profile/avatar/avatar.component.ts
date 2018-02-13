@@ -12,16 +12,16 @@ import { ApiService } from '../../../shared/utils/api.service';
         
 export class AvatarComponent implements AfterViewInit{
 
-    public hairImg: string;
-    public faceImg: string;
-    public eyesImg: string;
-    public noseImg: string;
-    public mouthImg: string;
-    public neckImg: string;
-    public shirtImg: string;
-    public armsImg: string;
-    public pantsImg: string;
-    public shoesImg: string;
+    public hairImg: string = '';
+    public faceImg: string = '';
+    public eyesImg: string = '';
+    public noseImg: string = '';
+    public mouthImg: string = '';
+    public neckImg: string = '';
+    public shirtImg: string = '';
+    public armsImg: string = '';
+    public pantsImg: string = '';
+    public shoesImg: string = '';
     public hairShapeId: number;
 
     public avatar = {};
@@ -87,6 +87,5 @@ export class AvatarComponent implements AfterViewInit{
         this.shoesImg = this.avatarService.getShoesByIndex(3);
 
         this.avatarDataRetrieved.emit(this.avatar);
-        
     }
 }

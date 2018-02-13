@@ -4,33 +4,17 @@
     display: inline-block;
 }
 
-#coinWrapper {
-    width: 150px;
-}
-
 a {
-    padding-right: 4%;
     text-decoration: none;
-    text-align: center;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    display: inline-flex;
 }
 
-button:focus {
-    outline:0;
+.right {
+    float: right;
 }
 
-button {
-    width: 100px;
-    height: 50px;
-    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-}
-
-.menu-toolbar {
-    min-width: 700px;
-	background-color: lightskyblue;
-	color: white;
-	min-height: 60px;
-	align-items: center;
-    justify-content: center;
-    margin-bottom: 25px;
+nav {
+    margin-bottom: 20px;
+    min-width: 825px;
 }

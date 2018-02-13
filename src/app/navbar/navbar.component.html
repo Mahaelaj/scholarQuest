@@ -1,16 +1,12 @@
-<mat-toolbar class="menu-toolbar" fxFlex md-scroll-shrink>
-    <div class="container max-width" fxFlex="95" fxFlex.gt-md="1164px" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="25px">
-        <button mat-button color="primary" [routerLink]="['/']" class="navbar-brand">SQ</button>
-        <button mat-button color="primary" [routerLink]="['/profile']">Home</button>
-        <button mat-button color="primary" [routerLink]="['/games']" >Games</button>
-        <span flex></span>
-        <a id="coinWrapper" *ngIf="userService.isLoggedIn()">
-            <img src="../assets/clip-art/GoldCoin.png" class="coin">{{goldCoins | number:'2.0-0'}}
-            <img src="../assets/clip-art/SilverCoin.png" class="coin"/>{{silverCoins | number:'2.0-0'}}
-        </a>
-        <span flex></span>
-        <button mat-button color="primary" *ngIf="!userService.isLoggedIn()" [routerLink]="['/auth/signup']">Sign Up</button>
-        <button mat-button color="primary" *ngIf="!userService.isLoggedIn()" [routerLink]="['/auth/login']">Login</button>
-        <button mat-button color="primary" *ngIf="userService.isLoggedIn()" (click)="logout()">Logout</button>
-    </div>
-</mat-toolbar>
+<nav mat-tab-nav-bar>
+    <a mat-tab-link [active]="isActiveRoute('home')" [routerLink]="['/']">SQ</a>
+    <a mat-tab-link [active]="isActiveRoute('profile')" [routerLink]="['/profile']">Home</a>
+    <a mat-tab-link [active]="isActiveRoute('games')" [routerLink]="['/games']">Games</a>
+    <a mat-tab-link disabled *ngIf="userService.isLoggedIn()">
+        <img src="../assets/clip-art/GoldCoin.png" class="coin">{{goldCoins | number:'2.0-0'}}
+        <img src="../assets/clip-art/SilverCoin.png" class="coin"/>{{silverCoins | number:'2.0-0'}}
+    </a>
+    <a mat-tab-link class="right" [active]="isActiveRoute('auth/signup')" *ngIf="!userService.isLoggedIn()" [routerLink]="['/auth/signup']">Sign Up</a>
+    <a mat-tab-link class="right" [active]="isActiveRoute('auth/login')" *ngIf="!userService.isLoggedIn()" [routerLink]="['/auth/login']">Login</a>
+    <a mat-tab-link class="right" *ngIf="userService.isLoggedIn()" (click)="logout()">Logout</a>
+</nav>

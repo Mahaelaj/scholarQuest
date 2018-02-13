@@ -11,7 +11,6 @@ import { ApiService } from '../../../shared/utils/api.service';
 export class UserProfilePageComponent {
     studentData = { cursorId: 1, cursorFollowerId: 1 };
 
-
     ngAfterViewInit(){
         this.apiService.post('getStudent', {}).subscribe(
             student => {
