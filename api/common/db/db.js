@@ -36,15 +36,15 @@ async function getDbConnection(env, multipleStatements) {
     if (!global.connectionPool) {
         global.connectionPool = mysql.createPool({
             connectionLimit: 100,
-            host     : 'sql3.freemysqlhosting.net',
-            user     : 'sql3220804',
-            password : 'DGwP7P87R5',
-            database : 'sql3220804'
+            host: 'localhost',
+            user: 'scholarQuest',
+            password: 'scholarQuest',
+            database: 'scholarQuest'
         });
-        // host     : 'us-cdbr-iron-east-05.cleardb.net',
-        // user     : 'b553ca7a78e543',
-        // password : '1aaa6461',
-        // database : 'heroku_ef33faaed6da36b'
+        // host     : 'sql3.freemysqlhosting.net',
+        // user     : 'sql3220804',
+        // password : 'DGwP7P87R5',
+        // database : 'sql3220804'
     }
     // get standard database connection from the pool
     var db = await global.connectionPool.getConnection();
