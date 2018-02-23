@@ -117,7 +117,7 @@ class User extends Controller {
 
 	async authenticate(ctx, next) {
 		// login, forgot password and reset password do not require authentication
-		if ((ctx.path.includes('/api/login') || ctx.path.includes('/api/signup') || ctx.path.includes('/api/getMath') || ctx.path.includes('/api/getVocabulary') || ctx.path.includes('/api/getVocabulary'))) { await next(); return; }
+		if ((ctx.path.includes('/api/login') || ctx.path.includes('/api/signup') || ctx.path.includes('/api/getMath') || ctx.path.includes('/api/getVocabulary') || ctx.path.includes('/api/getVocabulary') || ctx.path.includes('/api/getProducts'))) { await next(); return; }
 
 		if (!ctx.request.body.sessionToken) ctx.throw('Session required');
 		// check if we have a matching non-expired session record - save it in the koa object - this is mainly for the server side checks - not directly to be used by the client side

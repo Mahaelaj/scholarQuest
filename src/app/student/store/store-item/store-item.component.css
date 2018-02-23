@@ -1,0 +1,26 @@
+.item {
+    width: 300px;
+}
+
+.store-item {
+    width: 300px;
+    margin: auto;
+    display: block;
+    background-color: Transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.currency {
+    font-size: 30px;
+    display: inline-block;
+}
+
+.coin {
+    height: 40px;
+    display: inline-block;
+}
+
+.price {
+    margin-top: -30px;
+}

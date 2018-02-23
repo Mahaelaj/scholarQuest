@@ -2,6 +2,7 @@
     <a mat-tab-link [active]="isActiveRoute('home')" [routerLink]="['/']">SQ</a>
     <a mat-tab-link [active]="isActiveRoute('profile')" [routerLink]="['/profile']">Home</a>
     <a mat-tab-link [active]="isActiveRoute('games')" [routerLink]="['/games']">Games</a>
+    <a mat-tab-link [active]="isActiveRoute('store')" [routerLink]="['/store']">Store</a>
     <a mat-tab-link disabled *ngIf="userService.isLoggedIn()">
         <img src="../assets/clip-art/GoldCoin.png" class="coin">{{goldCoins | number:'2.0-0'}}
         <img src="../assets/clip-art/SilverCoin.png" class="coin"/>{{silverCoins | number:'2.0-0'}}

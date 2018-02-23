@@ -1,0 +1,23 @@
+<br>
+<h1>Store</h1>
+<br>
+<p *ngIf="noProducts">There are no products left</p>
+<div fxLayout="column" fxLayout.lg="row" fxLayout.xl="row" *ngFor="let row of productRows; let r = index">
+    <store-item *ngFor="let column of [null, null, null]; let c = index" fxFlex="33"[item]="products[(r*3) + c]" (click)="openConfirmationDialog(products[(r*3) + c])"></store-item>
+<div>
+
+<ng-template #confirmationDialog>
+    <mat-dialog-content>
+        <div class="dialog-content">
+            <img [src]="dialogProductItem" class="dialog-product">
+            <div class="price">
+                <img src="../../assets/clip-art/GoldCoin.png" class="coin">
+                <p class="currency">{{ dialogProductPrice / 100}}</p>
+            </div>
+        </div>
+        <div class="dialog-buttons">
+            <button mat-button (click)="buy()">Buy</button>
+            <button mat-button (click)="cancel()">Cancel</button>
+        </div>
+    </mat-dialog-content>
+</ng-template>

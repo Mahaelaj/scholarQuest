@@ -1,0 +1,40 @@
+store-item {
+    margin: auto;
+    display: block;
+}
+
+h1 {
+    text-align: center;
+}
+
+.dialog-product {
+    width: 300px;
+}
+
+.coin {
+    height: 40px;
+    display: inline-block;
+}
+
+.currency {
+    font-size: 30px;
+    display: inline-block;
+}
+
+.dialog-content {
+    margin: auto;
+    display: block;
+    background-color: Transparent;
+    border: none;
+}
+
+.price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dialog-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

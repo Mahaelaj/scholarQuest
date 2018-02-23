@@ -16,6 +16,7 @@ const Router = require('koa-router');
 var userRoutes = require('./controllers/user/user.js');
 var avatarRoutes = require('./controllers/avatar/avatar.js');
 const studentRoutes = require('./controllers/student/student.js');
+const storeRoutes = require('./controllers/store/store.js');
 
 const db = require('./common/db/db.js');
 
@@ -95,6 +96,7 @@ api.use(userRoutes.authenticate);
     userRoutes.setup_routes(router, api);
     avatarRoutes.setup_routes(router, api);
     studentRoutes.setup_routes(router, api);
+    storeRoutes.setup_routes(router, api);
 
     // now register the routes
     api.use(router.routes());

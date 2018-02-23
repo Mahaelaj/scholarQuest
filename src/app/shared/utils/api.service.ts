@@ -8,7 +8,7 @@ import { CoinsService } from './coins.service';
 @Injectable()
 export class ApiService {
 
-    constructor( public http: Http, public cookieService: CookiesService, public coinsService: CoinsService ) {}
+    constructor(public http: Http, public cookieService: CookiesService, public coinsService: CoinsService) {}
 
     /*
      * patch request
@@ -51,5 +51,3 @@ export class ApiService {
 
     }
 }   
-
-//http://Sample-env.d2apiyj8p6.us-west-2.elasticbeanstalk.com/

@@ -48,7 +48,8 @@ import { CursorService } from './cursor/cursor.service';
             { path: 'home', component: HomeComponent },
             { path: 'games', loadChildren: './student/games/games.module#GamesModule' },
             { path: 'profile', loadChildren: './student/user-profile/user-profile.module#UserProfileModule' },
-            { path: 'auth', loadChildren: './auth/auth.module#AuthModule' }
+            { path: 'auth', loadChildren: './auth/auth.module#AuthModule' },
+            { path: 'store', loadChildren: './student/store/store.module#StoreModule' }
         ])
     ],
     providers: [ApiService, ArrayService, CookiesService, CursorFollowerService, CursorService, CoinsService, Toasty, UserService],
