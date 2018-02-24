@@ -48,6 +48,5 @@ export class ApiService {
             this.patch('student/patchStudent', {'token': this.cookieService.getCookie('token'), 'coins' : response.coins + coins}).subscribe(r => { 
             });
         })
-
     }
 }   
