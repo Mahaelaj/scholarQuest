@@ -26,3 +26,12 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
+## Deploying to Heroku
+* update the production databse
+* change the database to the production database
+* run ng build --prod --aot
+* remove /dist from the gitnore file
+* commit changes
+* git push heroku master
